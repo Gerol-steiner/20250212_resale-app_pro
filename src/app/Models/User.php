@@ -41,4 +41,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // ユーザーは複数の住所を持つ
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    // ユーザーは複数の購入を持つ
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

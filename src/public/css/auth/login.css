@@ -1,0 +1,139 @@
+body {
+    font-weight: 600;
+}
+
+.header {
+    background-color: #000000;
+}
+
+.header__logo {
+    display: block;
+    /* インラインからブロック要素に変更 */
+    padding: 15px;
+}
+
+.form__title {
+    margin-top:100px;
+    text-align: center;
+}
+
+.form {
+    margin: 60px auto;
+    width: 500px;
+    height: 600px;
+    display: flex;
+    /*justify-content設定のため*/
+    justify-content: center;
+}
+
+.form__inner {
+    width: 100%;
+}
+
+.form__group {
+    display: flex;
+    flex-direction: column;
+    /* 子要素を縦に並べる */
+    margin-bottom: 35px;
+}
+
+.error-message {
+    display: block;
+    text-align: right;
+    color: red;
+    font-size: 12px;
+    min-height: 18px;
+    /* エラーメッセージの高さを確保 */
+}
+
+.form__group-content {
+    height: 60px;
+    /*バリデーションメッセージで垂直方向レイアウトが崩れない高さ*/
+}
+
+.form__input--text input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #9a9a9a;
+    font-size: 14px;
+    /*ユーザの入力文字サイズ*/
+}
+
+/*regiterボタン*/
+.form__button {
+    margin-top: 30px;
+    display: flex;
+    /*justify-contentでボタンを中央配置*/
+    justify-content: center
+}
+
+.form__button-submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 100%;
+    background-color: #FF5555;
+    font-size: 16px;
+    color: white;
+    border-radius: 2px;
+    border: none;
+    margin: 20px 0;
+    /*上下にのみmargin*/
+    cursor: pointer;
+    /* カーソルをポインタに */
+
+}
+
+/*registerへのリンク*/
+.form__link {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.form__link a {
+    font-size: 13px;
+    color: #007bff;
+    text-decoration: none;
+    /* 下線を消す */
+}
+
+.form__link a:hover {
+    text-decoration: underline;
+    /* ホバー時に下線を表示 */
+}
+
+/* タブレット（768-850px）向けのスタイル */
+@media screen and (max-width: 850px) {
+    .form {
+        width: 70%;
+        /* 幅を広げて画面に合わせる */
+        height: auto;
+    }
+
+    .form__title {
+        /* margin: 30px;  マージンを減らす */
+    }
+
+    .form__group {
+        margin-bottom: 20px;
+        /* マージンを減らす */
+    }
+
+    .form__button-submit {
+        height: 40px;
+        /* ボタンの高さを調整 */
+        font-size: 14px;
+        /* フォントサイズを調整 */
+    }
+
+    .error-message {
+        font-size: 10px;
+        /* エラーメッセージのフォントサイズを小さく */
+    }
+
+    .form__link a {
+        font-size: 10px;
+        /* ログインリンクのフォントサイズを小さく */
+    }
+}

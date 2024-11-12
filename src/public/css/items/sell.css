@@ -1,0 +1,420 @@
+body {
+    font-weight: 600;
+}
+
+.header {
+    background-color: #000000;
+}
+
+.header_inner {
+    display: flex;
+    height: 70px;  /*ヘッダーの高さ*/
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.header__nav {
+    width: 350px;  /*ヘッダー内navの幅*/
+    height: 100%;
+    font-size: 18px;  /*ヘッダー内navのフォントサイズ*/
+    display: flex;
+    justify-content: flex-end;  /*右寄せ*/
+    align-items: center;
+    text-decoration: none;
+}
+
+.header__link {
+    margin-right: 20px;  /* リンクの間隔 */
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.header__logout-button {
+    /*ログアウトbutton*/
+    font-weight: 600;
+    width: 120px;
+    font-size: 18px;
+    border: none;
+    margin-right: 20px;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.header__button {
+    width: 75px;
+    height: 55%;  /*出品ボタンの高さ*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 3px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+.form__title {  /*タイトル【商品の出品】*/
+
+}
+
+.form {  /*フォーム全体の大きさ*/
+    width: 35%;
+}
+
+/*■ 商品画像*/
+.item-image-content {  /*商品画像のアップロードエリア_破線*/
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 100px;
+    border: 1px dashed rgb(90, 96, 106);
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+
+.custom-file-upload {  /*「画像を選択する」ボタン*/
+    display: inline-flex;
+    padding: 8px 18px;  /*タテ ヨコ*/
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #FF5655;
+    border: 2px solid #FF5655;
+    background-color: #ffffff;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.custom-file-upload:hover {  /*ホバー時*/
+    color: #FF5655;
+    background-color: #f3f3f3;
+}
+
+.btn-crop,
+.btn-edit {
+    /*「クロップ領域を決定」「再編集」ボタン*/
+    display: inline-flex;
+    padding:10px 18px;
+    /*タテ ヨコ*/
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #ffffff;
+    border: none;
+    background-color: #ff0000;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.btn-crop:hover,
+.btn-edit:hover {
+    color: #d7d7d7;
+    background-color: #c10000;
+}
+
+
+.item-image-input {  /*「画像を選択」ボタンを囲む＜div＞*/
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.item-image-cropping {  /*AとBを囲む<div>*/
+        border: 3px solid #00ff40;
+}
+
+.item-image-preview-wrapper {  /*A）画像編集領域*/
+            border: 3px solid #ffc800;
+}
+
+.item-image-action {  /*B）「クロップ領域を決定」「再編集」を囲む<div>*/
+    border: 3px solid #0011ff;
+}
+
+.item-image-result {
+            border: 3px dashed #ff0400;
+}
+
+.item-image-result-wrapper {
+    border: 3px dashed #00c303;
+}
+
+.item-image-result-preview {
+        border: 1px solid #c5c5c5;
+}
+
+h3 {  /*見出し*/
+    font-size: 22px;
+    color: #5F5F5F;
+    border-bottom: 1px solid #5F5F5F;
+    margin-top: 75px;
+    padding-bottom: 5px;
+}
+
+/*■ カテゴリーボタン（チェックボックス）*/
+.category-selection {
+    /* height: 140px; */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    padding-left: 20px;
+}
+
+.category-button {
+    position: relative;
+}
+
+.category-button input[type="checkbox"] {  /*チェックボックスの □ 消す*/
+    display: none;
+}
+
+.category-button label {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 14px;
+    color: #FF5655;
+    background-color: #ffffff;
+    border: 1px solid #FF5655;
+    border-radius: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-button input[type="checkbox"]:checked+label {
+    background-color: #FF5655;
+    color: white;
+}
+
+.category-button label:hover {
+    background-color: #ffe6e6;
+}
+
+.category-button input[type="checkbox"]:checked+label:hover {
+    background-color: #FF7A7A;
+}
+
+/* ■ 商品の状態*/
+.condition-selection {
+    margin-top: 50px;
+}
+
+.condition-selection select {
+    appearance: none;
+    margin-top: 4px;
+    padding: 10px;
+    padding-right: 40px;
+    /* 矢印のスペースを確保 */
+    width: 100%;
+    color: #5F5F5F;
+    /* 未選択時の文字色 */
+    background-color: white;
+    /* 未選択時の背景色 */
+    border: 1px solid #5F5F5F;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #5F5F5F 50%),
+        /* 上のV */
+        linear-gradient(135deg, #5F5F5F 50%, transparent 50%),
+        /* 下のV */
+        linear-gradient(to right, white, white);
+    /* 背景 */
+
+    background-position:
+        calc(100% - 25px) calc(1em + -2px),
+        /* 上のVの位置 */
+        calc(100% - 15px) calc(1em + -2px),
+        /* 下のVの位置 */
+        100% 0;
+    /* 背景の位置 */
+
+    background-size:
+        10px 10px,
+        /* Vのサイズを調整 */
+        10px 10px,
+        /* Vのサイズを調整 */
+        100% 100%;
+    /* 背景全体のサイズ */
+
+    background-repeat: no-repeat;
+}
+
+.condition-selection select option {
+    padding: 10px;
+    /* オプションのパディング */
+    background-color: #5F5F5F;
+    /* オプションの背景色 */
+    color: white;
+    /* オプションの文字色 */
+}
+
+.condition-selection select option:hover {
+    background-color: #e0e0e0;
+    /* ホバー時の背景色 */
+}
+
+.condition-selection select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(95, 95, 95, .25);
+}
+
+.condition-selection select option:first-child {
+    display: none;
+    /* プレースホルダーオプションを非表示 */
+}
+
+.condition-selection select:not(:focus) option:first-child {
+    display: block;
+    /* フォーカス外で表示 */
+}
+
+/*■ 小見出しコンテナ*/
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;;
+}
+
+/*■ 小見出し*/
+.form-input {
+    font-size: 16px;
+    padding: 10px;
+    margin-top: 4px;
+    border-radius: 3px;
+    border: 1px solid #5F5F5F;
+}
+
+.label-container {/*「任意」マーク*/
+    display: flex;
+    align-items: center;
+}
+
+.optional-label {  /*「任意」マーク*/
+    display: inline-block;
+    background-color: #6e6e6e;
+    padding: 1px 4px;
+    margin-left: 9px;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+/*■ 商品の説明（テキストエリア）*/
+.form-textarea {
+    height: 100px;
+    margin-top: 4px;
+}
+
+.price-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/*販売価格「￥」マーク*/
+.currency-symbol {
+    position: absolute;
+    left: 10px;
+    color: #000;
+    top: 25%;  /* 入力フィールドの高さに合わせて調整 */
+}
+
+.price-input-field {
+    padding-left: 35px;  /*「￥」マーク分の余白*/
+    width: 100%;
+}
+
+/* 金額入力用スピンボックスを非表示にする */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    /* WebKit系ブラウザ用 */
+    margin: 0;
+    /* マージンをリセット */
+}
+
+/* Firefox用 */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/*■ 「出品する」ボタン*/
+.form-button {
+    color: white;
+    background-color: #FF5655;
+    border: none;
+    border-radius: 6px;
+    font-size: 20px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 60px;
+    margin-bottom:150px;
+    cursor: pointer;
+}
+
+/* バリデーションメッセージ*/
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+/* ■ タブレット（768-850px）向けのスタイル */
+@media screen and (max-width: 850px) {
+    /*ヘッダーの設定*/
+    .header {
+        background-color: #000000;
+    }
+
+    .header_inner {
+        display: flex;  /*横並びに配置*/
+        /* flex-wrap: wrap;  アイテムを折り返す */
+        justify-content: space-between;
+        height: auto;
+        padding: 10px 15px 2px 15px;  /*上 右 下 左*/
+        margin: 0;
+    }
+
+    .header__logo {
+        width: 100%;
+        margin: 5px 0 10px 0;  /*上 右 下 左*/
+    }
+
+    .header__nav {
+        display: flex;
+        font-size: 16px;
+        height: 50px;
+        width: 70%;
+    }
+
+    /*ログアウトボタン*/
+    .header__logout-button {
+        width: 100px;
+        font-size: 16px;
+    }
+
+    .header__link {
+        margin-right: 20px;  /* リンクの間隔 */
+    }
+
+    .header__button {
+        width: 70px;
+    }
+    .form {
+        /*フォーム全体の大きさ*/
+        width: 65%;
+    }
+

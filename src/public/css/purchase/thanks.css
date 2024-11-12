@@ -1,0 +1,118 @@
+body {
+    font-weight: 600;
+}
+
+.header {
+    background-color: #000000;
+}
+
+.header_inner {
+    display: flex;
+    height: 70px;
+    /*ヘッダーの高さ*/
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.header__nav {
+    width: 400px;
+    /*ヘッダー内navの幅*/
+    height: 100%;
+    font-size: 18px;
+    /*ヘッダー内navのフォントサイズ*/
+    display: flex;
+    justify-content: flex-end;
+    /*右寄せ*/
+    align-items: center;
+    text-decoration: none;
+
+}
+
+.header__link {
+    margin-right: 30px;
+    /* リンクの間隔 */
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.header__button {
+    width: 75px;
+    height: 55%;
+    /*出品ボタンの高さ*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 3px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.header__logout-button {
+    /*ログアウトbutton*/
+    font-weight: 600;
+    width: 120px;
+    font-size: 18px;
+    border: none;
+    margin-right: 20px;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.message-container {
+    margin-top: 200px;
+    padding: 50px;
+    background-color: rgb(255, 241, 196);
+}
+
+.message {
+    font-size: 36px;
+    text-align: center;
+}
+
+/* ■ タブレット（768-850px）向けのスタイル */
+@media screen and (max-width: 850px) {
+
+    /*ヘッダーの設定*/
+    .header {
+        background-color: #000000;
+    }
+
+    .header_inner {
+        display: flex;
+        /*横並びに配置*/
+        /* flex-wrap: wrap;  アイテムを折り返す */
+        justify-content: space-between;
+        height: auto;
+        padding: 10px 15px 2px 15px;
+        /*上 右 下 左*/
+        margin: 0;
+    }
+
+    .header__logo {
+        width: 100%;
+        margin: 5px 0 10px 0;
+        /*上 右 下 左*/
+    }
+
+    .header__nav {
+        display: flex;
+        font-size: 16px;
+        height: 50px;
+        width: 100%;
+    }
+
+    /*ログアウトボタン*/
+    .header__logout-button {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .header__link {
+        margin-right: 30px;
+        /* リンクの間隔 */
+    }
+
+}

@@ -1,0 +1,430 @@
+body {
+    font-weight: 600;
+}
+
+.header {
+    background-color: #000000;
+}
+
+.header_inner {
+    display: flex;
+    height: 70px;
+    /*ヘッダーの高さ*/
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 30px;
+    margin-right: 20px;
+}
+
+.header__nav {
+    width: 400px;
+    /*ヘッダー内navの幅*/
+    height: 100%;
+    font-size: 18px;
+    /*ヘッダー内navのフォントサイズ*/
+    display: flex;
+    justify-content: flex-end;
+    /*右寄せ*/
+    align-items: center;
+    text-decoration: none;
+
+}
+
+.header__link {
+    margin-right: 30px;
+    /* リンクの間隔 */
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.header__button {
+    width: 75px;
+    height: 55%;
+    /*出品ボタンの高さ*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 3px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.header__logout-button {
+    /*ログアウトbutton*/
+    font-weight: 600;
+    width: 120px;
+    font-size: 18px;
+    border: none;
+    margin-right: 20px;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+.main-container {
+    width: calc(100% - 370px);
+    display: flex;
+}
+
+/* 画面の左半分 */
+.img-container {
+    width: 50%;
+    min-width: 250px;
+    padding-top: 20px;
+    padding-right: 60px;
+    padding-left: 60px;
+    border: 1px solid rgb(0, 0, 255);
+}
+
+.item-image {
+    width: 100%;
+}
+
+/*画像コンテナ*/
+.item-card {
+    width: 100%;
+    position: relative;  /*「Sold」ラベルを左上に表示させるため*/
+}
+
+/*「Sold」ラベル*/
+.sold-label {
+    position: absolute;
+    /*「Sold」ラベルを左上に表示させるため*/
+    top: 0;
+    left: 0;
+    width:35%;
+    height: auto;
+    /* アスペクト比を保持 */
+    z-index: 10;
+    /* 他の要素の上に表示 */
+}
+
+/* 画面の右半分 */
+.detail-container {
+    width: 50%;
+    min-width: 250px;
+    border: 1px solid rgb(0, 0, 255);
+}
+
+
+/*商品名*/
+.item-name {
+    font-size: 30px;
+    font-weight: 900;
+}
+
+/*ブランド名*/
+.item-brand {
+    height: 28px;
+    font-size: 16px;
+    font-weight: 100;
+    margin-bottom: 10px;
+}
+
+/*価格*/
+.price {
+    font-size: 35px;
+    font-weight: 400;
+}
+
+.yen-symbol {
+    font-size: 0.7em;
+}
+
+
+/*いいね、コメント：外枠*/
+.interaction-counts {
+    display: flex;
+    margin: 20px 5px;
+}
+
+/*いいね、コメント：内枠*/
+.like-count,
+.comment-count {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*いいねマーク*/
+.like-count img {
+    width: 35px;
+    margin-bottom: 3px;
+}
+/*コメントマーク*/
+.comment-count img {
+    width: 33px;
+    margin-top: 4px;
+    margin-bottom: 3px;
+}
+
+/*「購入する」ボタン*/
+.purchase-button {
+    width: calc(100% - 20px);  /* marginを考慮した幅 */
+    height: 40px;  /* 上　左右 下*/
+    font-size: 20px;
+    color: white;
+    background-color: #FF5555;
+    border: none;
+    border-radius: 2px;
+    margin: 20px 10px 50px;/
+}
+
+/*「売り切れました」ボタン*/
+.sold-out-button {
+    width: calc(100% - 20px);
+    /* marginを考慮した幅 */
+    height: 40px;
+    /* 上　左右 下*/
+    font-size: 20px;
+    color: rgb(218, 218, 218);
+    background-color: #7b7b7b;
+    border: none;
+    border-radius: 2px;
+    margin: 20px 10px 50px;/
+}
+
+/*未ログインユーザ用の「ログインして購入」ボタン*/
+.purchase-login-button {
+    display: flex;
+    font-size: 20px;
+    width: calc(100% - 20px);
+    margin: 50px 10px;
+    height: 40px;
+    color: white;
+    background-color: #FF5555;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+/*商品説明 見出し*/
+.item-description-title {
+    font-size: 25px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+/*商品説明*/
+.item-description {
+    font-weight: 100;
+    font-size:18px;
+    margin-left: 20px;
+    margin-bottom: 40px;
+}
+
+/*商品の情報*/
+.item-info-title {
+    font-size: 25px;
+}
+
+/*カテゴリー,商品の状態*/
+.item-category-title,
+.item-condition-title {
+    width: 120px;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.item-category-wrapper,
+.item-condition-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+/*楕円型のカテゴリー*/
+.ellipse {
+    display: inline-block;
+    padding: 2px 20px;
+    background-color: #D9D9D9;
+    border-radius: 50px;
+    margin: 5px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
+
+.item-condition {
+    font-weight: 400;
+    margin: 0 20px;
+}
+
+/*コメント：タイトル*/
+.comments-title {
+    color: #5F5F5F;
+    font-size: 25px;
+    margin-top:40px;
+    margin-bottom: 15px;
+}
+
+/*コメント：大フレーム*/
+.comments-list {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 50px;
+}
+
+/*コメント：中フレーム*/
+.comment-item {
+    margin-bottom: 10px;
+}
+
+/*コメント：小フレーム*/
+.comment-user {
+    margin: 10px 0;
+}
+
+/*コメント：プロフィール画像*/
+.profile-image {
+    width: 45px;
+    border-radius: 100px;
+}
+
+/*コメント：内容*/
+.comment-content {
+    margin:0 10px;
+    font-weight: 400;
+    background-color: #E5E5E5;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/*商品へのコメント*/
+.comment-header {
+    font-size: 20px;
+}
+
+.comment-form {
+    width: 100%;
+}
+
+/*コメント：テキストエリア*/
+.comment-form textarea {
+    width: calc(100% - 20px);  /* marginを考慮した幅 */
+    min-height: 90px;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0px 10px;
+}
+
+/*エラーメッセージ：エリア確保*/
+.error-message-area {
+    width: 220px;
+    height: 20px;
+    margin-top: -5px;
+}
+
+/*エラーメッセージ*/
+.text-danger {
+    font-size: 12px;
+    color: red;
+}
+
+/*コメント送信ボタン*/
+.submit-button {
+    width: calc(100% - 20px); /* marginを考慮した幅 */
+    height: 40px;
+    font-size: 20px;
+    color: white;
+    background-color: #FF5555;
+    border: none;
+    border-radius: 2px;
+    margin: 20px 10px 50px;/
+    }
+
+/*未ログインユーザへの「ログインしてコメントする」ボタン*/
+.comment-login-button {
+    display: flex;
+    width: calc(100% - 20px);
+    margin: 50px 10px;
+    height: 40px;
+    color: white;
+    background-color: #FF5555;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-radius: 2px;
+    font-size: 20px;
+}
+
+
+/* ■ タブレット（768-850px）向けのスタイル */
+@media screen and (max-width: 850px) {
+
+    /*ヘッダーの設定*/
+    .header {
+        background-color: #000000;
+    }
+
+    .header_inner {
+        display: flex;
+        /*横並びに配置*/
+        /* flex-wrap: wrap;  アイテムを折り返す */
+        justify-content: space-between;
+        height: auto;
+        padding: 10px 15px 2px 15px;
+        /*上 右 下 左*/
+        margin: 0;
+    }
+
+    .header__logo {
+        width: 100%;
+        margin: 5px 0 10px 0;
+        /*上 右 下 左*/
+    }
+
+    .header__nav {
+        display: flex;
+        font-size: 16px;
+        height: 50px;
+        width: 100%;
+    }
+
+    /*ログアウトボタン*/
+    .header__logout-button {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .header__link {
+        margin-right: 30px;
+        /* リンクの間隔 */
+    }
+
+    .form {
+        /*フォーム全体の大きさ*/
+        width: 65%;
+    }
+
+    /*一番外の枠*/
+    .main-container {
+        width: calc(100% - 20px);  /* marginを考慮した幅 */
+        margin: 50px 10px;  /* 上下のマージン */
+        display: flex;
+    }
+
+    /* 画面の左半分 */
+    .img-container {
+        width: 50%;
+        padding-top: 20px;
+        padding-right: 30px;
+        padding-left: 30px;
+        border: 1px solid rgb(0, 0, 255);
+    }
+
+    /* 画面の右半分 */
+    .detail-container {
+        width: 50%;
+        min-width: 0px;
+        border: 1px solid rgb(0, 0, 255);
+    }
+}
