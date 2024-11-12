@@ -55,7 +55,7 @@ Route::post('/purchase/{id}', [PurchaseController::class, 'purchase'])->name('pu
 // 商品購入画面への遷移 (2) ※住所変更画面からのback
 Route::get('/purchase/{id}', [PurchaseController::class, 'show'])->name('purchase.show');
 
-// 商品の購入 および サンクス画面への遷移
+// 商品の購入 および サンクス画面への遷移（コンビニ支払い）
 Route::post('/thanks', [PurchaseController::class, 'thanks'])->name('thanks');
 
 // 住所変更画面への遷移ルート
@@ -86,3 +86,5 @@ Route::get('/purchase/success', [PurchaseController::class, 'success'])->name('p
 // フォームリクエストPurchaseRequestによるバリデーション用のルート
 Route::post('/validate-purchase', [PurchaseController::class, 'validatePurchase'])->name('validate.purchase');
 
+// 「コンビニ支払い」時のthanksメソッド －＞ ビューの「if (data.success)」からのget
+Route::get('/thanks', [PurchaseController::class, 'showThanksPage'])->name('thanks');

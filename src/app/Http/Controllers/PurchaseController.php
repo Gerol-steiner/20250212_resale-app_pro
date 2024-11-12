@@ -8,7 +8,7 @@ use App\Models\Item; // 追加
 use App\Models\Purchase; // 追加
 use App\Models\Address; // 追加
 use App\Http\Requests\PurchaseRequest; // フォームリクエスト
-use Illuminate\Support\Facades\Log; // 追加
+use Illuminate\Support\Facades\Log; // 追加（デバッグ用）
 
 use Stripe\Stripe;  // Stripe決済用
 use Stripe\Checkout\Session; // Stripe決済用
@@ -77,11 +77,6 @@ class PurchaseController extends Controller
             }
         }
 
-
-            // デバッグログ
-        Log::info('Default address:', [$address]);
-        Log::info('Previous address from session:', [session('previous_address')]);
-
         return view('items.purchase', compact('item', 'isAuthenticated', 'userId', 'address'));
     }
 
@@ -89,6 +84,7 @@ class PurchaseController extends Controller
     // 「コンビニ支払い」が選ばれたときに以下にルーティングされる
     public function thanks(PurchaseRequest $request)
     {
+
         // 認証済みユーザーかどうかを確認
         $isAuthenticated = Auth::check();
         $userId = $isAuthenticated ? Auth::id() : null;
@@ -100,7 +96,7 @@ class PurchaseController extends Controller
         $itemId = $request->input('item_id');
 
         // フォームリクエストから住所情報を取得
-        $addressId = $request->input('id'); // address_idをリクエストから取得
+        $addressId = $request->input('address_id'); // address_idをリクエストから取得
 
         // purchasesテーブルに保存
         Purchase::create([
@@ -110,7 +106,8 @@ class PurchaseController extends Controller
             'address_id' => $addressId, // フォームリクエストから取得したaddress_idを設定
         ]);
 
-        return view('purchase.thanks', compact('isAuthenticated', 'userId'));
+        // JSONレスポンスを返す（Jsonレスポンスを返さないとエラー。サンクス画面への遷移はフロントで行う）
+        return response()->json(['success' => true, 'message' => '購入処理が完了しました。']);
     }
 
     // 以下Stripe決済用メソッド
@@ -159,14 +156,37 @@ class PurchaseController extends Controller
         return view('purchase.thanks', compact('userId'));
     }
 
+
     public function validatePurchase(PurchaseRequest $request)
     {
-        // バリデーションが成功した場合、Stripeのチェックアウトセッションを作成する
-        $session = $this->createCheckoutSession($request);
+        // バリデーションが成功した場合、支払い方法によって処理を分岐する
+        $paymentMethod = $request->input('payment_method');
 
-        return response()->json([
-            'success' => true,
-            'session_id' => $session->id, // チェックアウトセッションのIDを返す
-        ]);
+        if ($paymentMethod === 'カード支払い') {
+            // カード支払いの場合は、Stripeのチェックアウトセッションを作成する
+            $session = $this->createCheckoutSession($request);
+
+            return response()->json([
+                'success' => true,
+                'session_id' => $session->id, // チェックアウトセッションのIDを返す
+            ]);
+
+        } elseif ($paymentMethod === 'コンビニ支払い') {
+            // コンビニ支払いの場合は、thanksメソッドを呼び出す
+            return $this->thanks($request);
+        }
+
+        // それ以外の支払い方法が選択された場合はエラーレスポンスを返す
+        return response()->json(['success' => false, 'message' => '無効な支払い方法です。']);
+    }
+
+    // 「コンビニ支払い」のときにビューの「if (data.success)」から再び戻ってきた時の処理
+    public function showThanksPage()
+    {
+        // 認証済みユーザーかどうかを確認
+        $isAuthenticated = Auth::check();
+        $userId = $isAuthenticated ? Auth::id() : null;
+
+        return view('purchase.thanks', compact('userId', 'isAuthenticated'));
     }
 }

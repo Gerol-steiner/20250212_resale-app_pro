@@ -215,18 +215,24 @@ checkoutButton.addEventListener('click', function() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // 成功時の処理
-            console.log('購入処理が成功しました:', data);
+        if (data.success) {  // PurchaseControllerの「validatePurchaseメソッド」からのreturn
 
-                    // Stripe Checkoutを開始する
-                    stripe.redirectToCheckout({ sessionId: data.session_id })
-                        .then(function (result) {
-                            if (result.error) {
-                                // エラーメッセージを表示
-                                console.error(result.error.message);
-                            }
-                        });
+            if (paymentMethod === 'カード支払い') {
+                // 成功時の処理（カード支払い）
+                console.log('購入処理が成功しました:', data);
+                stripe.redirectToCheckout({ sessionId: data.session_id })
+                    .then(function (result) {
+                        if (result.error) {
+                            // エラーメッセージを表示
+                            console.error(result.error.message);
+                        }
+                    });
+            } else if (paymentMethod === 'コンビニ支払い') {
+                // 成功時の処理（コンビニ支払い）
+                console.log('購入処理が成功しました:', data);
+                window.location.href = '/thanks'; // thanks.blade.phpへ遷移
+            }
+
         } else if (data.errors) {
             // バリデーションエラーの処理
             const errorMessage = data.errors.payment_method ? data.errors.payment_method[0] : 'エラーが発生しました'; // エラーメッセージを取得
