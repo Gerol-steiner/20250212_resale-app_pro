@@ -41,9 +41,15 @@
     </header>
 
     <main>
-
             <nav class="item-filter-nav">
                 <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
+                <!--フラッシュメッセージ 「メールアドレスは既に認証されています」-->
+                <!--フラッシュメッセージ 「メールアドレスは既に認証されています。ログインしました。」-->
+                @if(session('info'))
+                    <div class="alert-info">
+                        {{ session('info') }}
+                    </div>
+                @endif
                 <ul class="filter-list">
                     <li class="filter-option">
                         <a href="/?tab=home&search={{ $search }}" class="filter-link {{ $currentPage === 'home' ? 'active' : '' }}">おすすめ</a>

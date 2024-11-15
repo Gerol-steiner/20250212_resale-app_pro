@@ -18,6 +18,14 @@
     </header>
 
     <main>
+
+<!--フラッシュメッセージ 「'無効な認証リンクです。」-->
+@if(session('error'))
+    <div class="alert-error">
+        {{ session('error') }}
+    </div>
+@endif
+
         <div class="form__container">
             <div class="form__title">
                 <h2>ログイン</h2>

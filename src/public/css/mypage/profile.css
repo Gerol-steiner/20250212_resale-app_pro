@@ -60,6 +60,12 @@ body {
     color: #ffffff;
 }
 
+/* フラッシュ―メッセージ「メールアドレスが認証されました」 */
+.alert-success {
+    color: green;
+    margin: 10px;
+}
+
 main {
     display: flex;
     flex-direction: column;

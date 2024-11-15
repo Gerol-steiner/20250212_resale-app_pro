@@ -93,6 +93,11 @@ body {
     color: #000000;
 }
 
+/*フラッシュメッセージ 「'既に認証されています」*/
+.alert-info {
+    color: green;
+    margin: 10px;
+}
 
 /* ■ 画面上部のナビゲーションボタン*/
 .item-filter-nav {

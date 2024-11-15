@@ -86,7 +86,15 @@
 
         <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>  <!-- 開発用 -->
 
+        <!--フラッシュ―メッセージ「メールアドレスが認証されました」-->
+        @if(session('success'))
+            <div class="alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
     <main>
+
 
 
         <div class="form__title">

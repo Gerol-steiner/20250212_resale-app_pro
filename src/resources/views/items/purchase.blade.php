@@ -98,23 +98,6 @@
                             <option value="カード支払い" {{ old('payment_method') === 'カード支払い' ? 'selected' : '' }}>カード支払い</option>
                         </select>
 
-                        <!--エラーメッセージ-->
-                        <div class="error-message-area">
-                            @error('payment_method')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <!--エラーメッセージ-->
-                        <div id="error-message" class="text-danger" ></div>
-<div class="error-message-area">
-    <div id="error-postal-code" class="text-danger" style="display: none;"></div>
-    <div id="error-address" class="text-danger" style="display: none;"></div>
-    <div id="error-building" class="text-danger" style="display: none;"></div>
-</div>
-
-
-
-
                         <!-- 隠しフィールドで住所情報をリクエストに含めて送信 -->
                         <input type="hidden" name="postal_code" value="{{ $address->postal_code ?? '' }}">
                         <input type="hidden" name="address" value="{{ $address->address ?? '' }}">
@@ -135,26 +118,25 @@
                         <a href="{{ url('/purchase/address/' . $item->id) }}" class="change-address-link">変更する</a>
                     </div>
                     <div class="address-details">
-                    @if ($address)
-                        <p>郵便番号: {{ $address->postal_code }}</p>
-                            <div class="error-message-area">
-                                @error('postal_code')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        <p>住所: {{ $address->address }}</p>
-                            <div class="error-message-area">
-                                @error('address')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        <p>建物名: {{ $address->building }}</p>
+
+                        @if ($address->postal_code)
+                            <p>郵便番号: {{ $address->postal_code }}</p>
                         @else
                             <p>郵便番号: 　（未設定）</p>
-                            <p>住所: 　（未設定）</p>
-                            <p>建物名: 　（未設定）</p>
-                            <p>※ デフォルトの配送先が設定されていません</p>
                         @endif
+
+                        @if ($address->address)
+                            <p>住所: {{ $address->address }}</p>
+                        @else
+                            <p>住所: 　（未設定）</p>
+                        @endif
+
+                        @if ($address->building)
+                            <p>建物名: {{ $address->building }}</p>
+                        @else
+                            <p>建物名: 　（未設定）</p>
+                        @endif
+
                     </div>
                 </div>
             </div>
@@ -175,7 +157,11 @@
                     <div id="selected-payment" class="selected-payment"></div>
                 </div>
                 <button type="button" id="checkout-button" class="purchase-button">購入する</button>
-
+                        <!--エラーメッセージ-->
+                        <div id="error-payment-method" class="text-danger" style="display: none;"></div>
+                        <div id="error-postal-code" class="text-danger" style="display: none;"></div>
+                        <div id="error-address" class="text-danger" style="display: none;"></div>
+                        <div id="error-building" class="text-danger" style="display: none;"></div>
             </div>
 
         </div>
@@ -234,11 +220,13 @@ checkoutButton.addEventListener('click', function() {
             }
 
         } else if (data.errors) {
-            // バリデーションエラーの処理
-            const errorMessage = data.errors.payment_method ? data.errors.payment_method[0] : 'エラーが発生しました'; // エラーメッセージを取得
-            const errorElement = document.getElementById('error-message'); // エラーメッセージ表示用の要素を取得
-            errorElement.textContent = errorMessage; // エラーメッセージを設定
-            errorElement.style.display = 'block'; // エラーメッセージを表示
+            // 支払い方法のエラーメッセージを処理
+            const paymentMethodErrorElement = document.getElementById('error-payment-method'); // 支払い方法エラーメッセージ表示用の要素を取得
+            paymentMethodErrorElement.style.display = 'none'; // 初期状態では非表示
+            if (data.errors.payment_method) {
+                paymentMethodErrorElement.textContent = data.errors.payment_method[0]; // 支払い方法のエラーメッセージを設定
+                paymentMethodErrorElement.style.display = 'block'; // 支払い方法のエラーメッセージを表示
+            }
 
             // 郵便番号のエラーメッセージを処理
             const postalErrorElement = document.getElementById('error-postal-code'); // 郵便番号エラーメッセージ表示用の要素を取得
@@ -255,6 +243,7 @@ checkoutButton.addEventListener('click', function() {
                 addressErrorElement.textContent = data.errors.address[0]; // 住所のエラーメッセージを設定
                 addressErrorElement.style.display = 'block'; // 住所のエラーメッセージを表示
             }
+
             // 建物名のエラーメッセージを処理
             const buildingErrorElement = document.getElementById('error-building'); // 建物名エラーメッセージ表示用の要素を取得
             buildingErrorElement.style.display = 'none'; // 初期状態では非表示

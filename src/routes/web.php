@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Auth\RegisterController; // メール認証用「laravel/ui」インストール時にディレクトリを変更
+use App\Http\Controllers\Auth\LoginController; // メール認証用「laravel/ui」インストール時にディレクトリを変更
 use App\Http\Controllers\Auth\AuthenticatedSessionController; // ログアウト処理用
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
@@ -10,11 +10,13 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\PaymentController; // Stripe決済用
+use Illuminate\Foundation\Auth\EmailVerificationRequest; // メール認証用
+use App\Http\Controllers\Auth\VerificationController; // メール認証用
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
-|--------------------------------------------------------------------------
+|--------------------------------------------------------------------------　
 |
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
@@ -22,7 +24,7 @@ use App\Http\Controllers\PaymentController; // Stripe決済用
 |
 */
 
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
+// Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 // ログアウト
@@ -88,3 +90,15 @@ Route::post('/validate-purchase', [PurchaseController::class, 'validatePurchase'
 
 // 「コンビニ支払い」時のthanksメソッド －＞ ビューの「if (data.success)」からのget
 Route::get('/thanks', [PurchaseController::class, 'showThanksPage'])->name('thanks');
+
+// メール認証用ルート
+Auth::routes(['verify' => true]);
+
+// メール認証待ちの仮登録完了メッセージ用のビュー
+Route::get('/register/pending', function () {return view('auth.registration_pending');})->name('registration.pending');
+
+// メール認証
+// 一時的にログインさせてから、verifyメソッドを呼び出す
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'temporaryLoginAndVerify'])
+    ->middleware(['signed'])  // 署名付きURLでの確認を行う
+    ->name('verification.verify');

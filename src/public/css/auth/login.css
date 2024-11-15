@@ -12,6 +12,12 @@ body {
     padding: 15px;
 }
 
+/*フラッシュメッセージ 「'無効な認証リンクです。」*/
+.alert-error {
+    color: red;
+    margin: 10px;
+}
+
 .form__title {
     margin-top:100px;
     text-align: center;
