@@ -128,7 +128,6 @@ body {
     justify-content: space-between;
     align-items: center;
     margin: 10px auto;  /* 上下のマージン */
-    border: 1px solid red;
 }
 
 .profile-image {
@@ -194,7 +193,6 @@ body {
     justify-content: flex-start;
     margin: 35px;
     /*item-cardと同じにする*/
-    border: 1px solid rgb(255, 0, 0);
 }
 
 .item-card {

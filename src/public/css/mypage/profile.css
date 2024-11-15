@@ -109,29 +109,24 @@ main {
 
 .profile-image-cropping {
     /*AとBを囲む<div>*/
-    border: 3px solid #00ff40;
 }
 
 .profile-image-preview-wrapper {
     /*A）画像編集領域*/
-    border: 3px solid #ffc800;
 }
 
 .profile-image-action {
     /*B）「画像を選択する」を囲む<div>*/
     display: flex;
     align-items: center;
-    border: 3px solid #0011ff;
 }
 
 .profile-image-result {
     display: flex;
-    border: 7px solid #ff0000;
     box-shadow: 6px 6px 8px rgba(66, 30, 30, 0.2); /*水平 垂直 半径*/
 }
 
 .profile-image-result-wrapper {
-    border: 3px dashed #00c303;
 }
 
 .profile-image-result-preview {  /*プロフィール画像の〇●*/

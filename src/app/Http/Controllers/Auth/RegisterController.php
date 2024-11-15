@@ -27,9 +27,6 @@ class RegisterController extends Controller
         // バリデーションが通った後、CreateNewUserを呼び出す(-> CreateNewUser.php)
         $user = (new CreateNewUser())->create($request->validated());
 
-        // 登録したユーザーを即座にログインさせる（▶プロフィール編集画面にてログイン済みとするため）
-        // Auth::login($user);
-
         // メール認証用の通知を送信
         $user->sendEmailVerificationNotification();
 

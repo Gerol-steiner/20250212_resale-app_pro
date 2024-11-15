@@ -40,7 +40,7 @@ public function login(LoginRequest $request)
 
     // 認証に失敗した場合の処理
     return back()->withErrors([
-        'email' => 'ログイン情報が正しくありません',
+        'email' => 'ログイン情報が登録されていません',
     ])->withInput();
 }
 

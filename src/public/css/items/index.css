@@ -128,13 +128,11 @@ body {
     flex-wrap: wrap;  /* アイテムを折り返す */
     justify-content: flex-start;
     margin: 35px; /*item-cardと同じにする*/
-    border: 1px solid rgb(255, 0, 0);
 }
 
 .item-card {
     width: calc(25% - 70px); /*１行に4枚表示させる*/
     margin: 35px; /*width 25%から引いたmarginの半分*/
-    border: 1px solid rgb(0, 34, 255);
     position: relative; /*「Sold」ラベルを左上に表示させるため*/
 }
 

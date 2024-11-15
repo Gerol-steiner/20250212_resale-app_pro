@@ -42,7 +42,7 @@ class VerificationController extends Controller
         }
 
         // ■ ハッシュが一致しない不正なケース
-        return redirect()->route('login')->with('error', '無効な認証リンクです。');
+        return redirect()->route('login')
     }
 
 }

@@ -130,23 +130,18 @@ main {
 
 
 .item-image-cropping {  /*AとBを囲む<div>*/
-        border: 3px solid #00ff40;
 }
 
 .item-image-preview-wrapper {  /*A）画像編集領域*/
-            border: 3px solid #ffc800;
 }
 
 .item-image-action {  /*B）「クロップ領域を決定」「再編集」を囲む<div>*/
-    border: 3px solid #0011ff;
 }
 
 .item-image-result {
-            border: 3px dashed #ff0400;
 }
 
 .item-image-result-wrapper {
-    border: 3px dashed #00c303;
 }
 
 .item-image-result-preview {
