@@ -129,4 +129,42 @@ class ItemMyListTest extends TestCase
         dump('マイリストタブの「Sold」ラベルのテスト正常に完了しました。');
     }
 
+
+    public function test_unauthenticated_user_sees_no_items_in_mylist()
+    {
+        // テストデータベースをシードする
+        $this->seed([
+            UsersTableSeeder::class,
+            CategoriesTableSeeder::class,
+            ConditionsTableSeeder::class,
+            ItemsTableSeeder::class
+        ]);
+
+        // テストユーザーを作成
+        $user = User::factory()->create();
+
+        // ユーザーが「いいね」した商品を作成
+        $likedItem = Item::factory()->create(); // いいねされた商品
+        Like::create([
+            'user_id' => $user->id,
+            'item_id' => $likedItem->id,
+        ]);
+
+        // 未認証ユーザーなのでコメントアウトによりログインさせない
+        //$this->actingAs($user);
+
+        // 1. ログインしない状態でマイリストページを開く（$tab === 'mylist'）
+        $response = $this->get('/?tab=mylist');
+
+        // ステータスコードが200（OK）であることを確認
+        $response->assertStatus(200);
+
+        // 2. 未認証ユーザーのため、「いいね」されている商品はあるが、何も表示されていないことを確認
+        $response->assertDontSee($likedItem->name);
+
+        // デバッグ出力
+        dump('未認証ユーザーのマイリストタブのテストが正常に完了しました。');
+    }
 }
+
+

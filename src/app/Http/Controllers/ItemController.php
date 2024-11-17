@@ -191,7 +191,8 @@ class ItemController extends Controller
         $isAuthenticated = Auth::check();
         $userId = $isAuthenticated ? Auth::id() : null;
 
-        // 指定された item_id に基づいて商品を取得
+        // 指定された item_id に該当する商品レコードを取得する
+        // 「いいね」「コメント」の数は「likes_count」「comments_count」 という名前の属性として $item オブジェクトに追加
         $item = Item::withCount(['likes', 'comments'])->find($item_id);
 
 
@@ -237,6 +238,8 @@ class ItemController extends Controller
             return response()->json(['success' => true]);
         }
     }
+
+
 }
 
 
