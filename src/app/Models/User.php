@@ -54,4 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail // （変更後：
     {
         return $this->hasMany(Purchase::class);
     }
+
+    // ユーザーは複数のいいねを持つ
+    public function likes()
+{
+    return $this->hasMany(Like::class);
+}
 }

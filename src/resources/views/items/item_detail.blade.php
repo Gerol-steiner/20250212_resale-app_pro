@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
                 'Content-Type': 'application/json',
-                'Accept': 'application/json', // ここにカンマを追加
+                'Accept': 'application/json',
             },
             body: JSON.stringify({ content: content })
         })
