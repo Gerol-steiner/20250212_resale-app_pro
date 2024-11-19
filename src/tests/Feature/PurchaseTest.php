@@ -265,6 +265,80 @@ class PurchaseTest extends TestCase
         dump('購入した商品について、商品一覧画面にて「Sold」ラベルが表示されていることを確認しました。');
     }
 
+    public function test_purchased_item_is_displayed_in_mypage_buy_tab()
+    {
+        // ① シードデータから条件を満たすユーザーとアイテムを取得
+        $users = User::inRandomOrder()->get();
+        $item = null;
+
+        foreach ($users as $user) {
+            $item = Item::whereDoesntHave('purchases') // 購入されていないアイテム
+                ->where('user_id', '!=', $user->id)   // ログインユーザー以外が出品
+                ->inRandomOrder()
+                ->first();
+
+            if ($item) {
+                break; // 条件を満たすアイテムが見つかったらループを抜ける
+            }
+        }
+
+        if (!$item) {
+            $this->fail('条件を満たすアイテムが見つかりませんでした。');
+        }
+
+        $address = Address::where('user_id', $user->id)->latest('id')->first();
+
+        // 条件を満たすユーザーをログイン
+        $this->actingAs($user);
+
+        // ② マイページを表示し、「購入した商品」タブを選択
+        $response = $this->get('/mypage?tab=buy');
+        $response->assertStatus(200);
+
+        // ③ 現時点で購入した商品が表示されていないことを確認
+        $response->assertDontSee($item->name);
+
+        // ④ 商品購入処理を実行
+        $response = $this->get("/purchase/{$item->id}");
+        $response->assertStatus(200);
+
+        $purchaseRequestPayload = [
+            'item_id' => $item->id,
+            'payment_method' => 'カード支払い',
+            'address_id' => $address->id,
+            'postal_code' => $address->postal_code,
+            'address' => $address->address,
+            'building' => $address->building,
+        ];
+
+        $response = $this->postJson(route('validate.purchase'), $purchaseRequestPayload);
+        $response->assertJson(['success' => true]);
+        $data = $response->json();
+        dump('Stripe Session ID: ' . $data['session_id']);
+        $this->assertArrayHasKey('session_id', $data);
+
+        $successUrl = route('purchaseComplete', [
+            'item_id' => $item->id,
+            'address_id' => $address->id,
+        ]);
+        $response = $this->get($successUrl);
+        $response->assertStatus(200);
+
+        // ⑤ purchasesテーブルに購入記録が保存されていることを確認
+        $this->assertDatabaseHas('purchases', [
+            'user_id' => $user->id,
+            'item_id' => $item->id,
+            'payment_method' => 'カード支払い',
+            'address_id' => $address->id,
+        ]);
+
+        // ⑥ 再びマイページを表示し、「購入した商品」タブを選択
+        $response = $this->get('/mypage?tab=buy');
+        $response->assertStatus(200);
+
+        // ⑦ 今回購入した商品が表示されていることを確認
+        $response->assertSee($item->name);
+    }
 
 
 }
