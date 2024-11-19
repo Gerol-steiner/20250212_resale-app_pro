@@ -89,7 +89,7 @@
                     <div class="payment-method__title">支払い方法</div>
 
                     <!--「支払い方法」プルダウンメニュー-->
-                    <form id="payment-form" action="{{ route('thanks') }}" method="POST" class=payment-method__form>
+                    <form id="payment-form" class=payment-method__form>
                         @csrf
                         <input type="hidden" name="item_id" value="{{ $item->id }}"> <!-- アイテムIDを隠しフィールドとして追加 -->
                         <select name="payment_method" id="payment_method" onchange="updatePaymentMethod()">
@@ -206,7 +206,7 @@ checkoutButton.addEventListener('click', function() {
             if (paymentMethod === 'カード支払い') {
                 // 成功時の処理（カード支払い）
                 console.log('購入処理が成功しました:', data);
-                stripe.redirectToCheckout({ sessionId: data.session_id })
+                stripe.redirectToCheckout({ sessionId: data.session_id }) // Stripe決済画面へのリダイレクト
                     .then(function (result) {
                         if (result.error) {
                             // エラーメッセージを表示
@@ -216,7 +216,7 @@ checkoutButton.addEventListener('click', function() {
             } else if (paymentMethod === 'コンビニ支払い') {
                 // 成功時の処理（コンビニ支払い）
                 console.log('購入処理が成功しました:', data);
-                window.location.href = '/thanks'; // thanks.blade.phpへ遷移
+                window.location.href = '/showthanks'; // thanks.blade.phpへ遷移
             }
 
         } else if (data.errors) {

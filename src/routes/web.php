@@ -57,9 +57,6 @@ Route::post('/purchase/{id}', [PurchaseController::class, 'purchase'])->name('pu
 // 商品購入画面への遷移 (2) ※住所変更画面からのback
 Route::get('/purchase/{id}', [PurchaseController::class, 'show'])->name('purchase.show');
 
-// 商品の購入 および サンクス画面への遷移（コンビニ支払い）
-Route::post('/thanks', [PurchaseController::class, 'thanks'])->name('thanks');
-
 // 住所変更画面への遷移ルート
 Route::get('/purchase/address/{item_id}', [AddressController::class, 'edit'])->name('address.edit');
 
@@ -83,13 +80,17 @@ Route::post('/create-checkout-session', [PurchaseController::class, 'createCheck
 
 // Stripe決済が成功した後のリダイレクト先ルート
 // 決済成功後の処理（purchasesテーブルへの登録、thanksページの表示）
-Route::get('/purchase/success', [PurchaseController::class, 'success'])->name('purchase.success');
+Route::get('/purchase/success', [PurchaseController::class, 'successRedirect'])->name('purchase.success');
 
 // フォームリクエストPurchaseRequestによるバリデーション用のルート
 Route::post('/validate-purchase', [PurchaseController::class, 'validatePurchase'])->name('validate.purchase');
 
 // 「コンビニ支払い」時のthanksメソッド －＞ ビューの「if (data.success)」からのget
-Route::get('/thanks', [PurchaseController::class, 'showThanksPage'])->name('thanks');
+Route::get('/showthanks', [PurchaseController::class, 'showThanksPage'])->name('showThanks');
+
+Route::get('/purchase-complete', [PurchaseController::class, 'completePurchase'])->name('purchaseComplete');
+
+
 
 // メール認証用ルート
 Auth::routes(['verify' => true]);

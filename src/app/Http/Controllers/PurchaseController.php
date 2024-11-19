@@ -80,8 +80,7 @@ class PurchaseController extends Controller
         return view('items.purchase', compact('item', 'isAuthenticated', 'userId', 'address'));
     }
 
-    // thanks画面表示とpusrchasesテーブルへの登録
-    // 「コンビニ支払い」が選ばれたときに以下にルーティングされる
+    // pusrchasesテーブルへの登録と<script>へのJsonレスポンス
     public function thanks(PurchaseRequest $request)
     {
 
@@ -114,9 +113,10 @@ class PurchaseController extends Controller
     public function createCheckoutSession(Request $request)
     {
         Stripe::setApiKey(config('services.stripe.secret_key'));
-
+        // リクエストから取得
         $itemId = $request->input('item_id');
         $item = Item::findOrFail($itemId);
+        $addressId = $request->input('address_id'); // 入力または選択された住所ID
 
         $session = Session::create([
             'payment_method_types' => ['card'],
@@ -131,16 +131,20 @@ class PurchaseController extends Controller
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => route('purchase.success', ['item_id' => $itemId]),  // ユーザがStripe決済を終了したときのリダイレクト先
-            'cancel_url' => route('item.index'), // ユーザがStripe決済をキャンセルしたときのリダイレクト先
+            'success_url' => route('purchaseComplete', [
+                'item_id' => $itemId,// item_idをクエリパラメータに含める（stripe決済完了後に「」メソッドでデータベース登録する）
+                'address_id' => $addressId, // address_idをクエリパラメータに含める（stripe決済完了後に「」メソッドでデータベース登録する）
+            ]),
+            'cancel_url' => route('item.index'),
         ]);
-
         return $session; // セッションオブジェクトを返す
     }
 
     // ユーザーがStripe決済処理後に以下のメソッドでpurchasesテーブルに登録してデータベース更新
-    public function success(Request $request)
+    public function successRedirect(Request $request)
     {
+        dd($request->all());
+
         $itemId = $request->input('item_id');
         $userId = Auth::id();
         $addressId = $request->session()->get('address_id');
@@ -165,7 +169,7 @@ class PurchaseController extends Controller
         if ($paymentMethod === 'カード支払い') {
             // カード支払いの場合は、Stripeのチェックアウトセッションを作成する
             $session = $this->createCheckoutSession($request);
-
+            // fetch関数によるクライアントサイドのJavaScriptコードに対してJSON形式でレスポンスを返す
             return response()->json([
                 'success' => true,
                 'session_id' => $session->id, // チェックアウトセッションのIDを返す
@@ -186,6 +190,28 @@ class PurchaseController extends Controller
         // 認証済みユーザーかどうかを確認
         $isAuthenticated = Auth::check();
         $userId = $isAuthenticated ? Auth::id() : null;
+
+        return view('purchase.thanks', compact('userId', 'isAuthenticated'));
+    }
+
+    public function completePurchase(Request $request)
+    {
+
+        // 認証済みユーザーかどうかを確認
+        $isAuthenticated = Auth::check();
+        $userId = $isAuthenticated ? Auth::id() : null;
+
+        $userId = Auth::id();
+        $itemId = $request->input('item_id'); // クエリパラメータから取得
+        $addressId = $request->input('address_id'); // クエリパラメータから取得
+        $paymentMethod = 'カード支払い';
+
+        Purchase::create([
+            'user_id' => $userId,
+            'item_id' => $itemId,
+            'payment_method' => $paymentMethod,
+            'address_id' => $addressId,
+        ]);
 
         return view('purchase.thanks', compact('userId', 'isAuthenticated'));
     }
