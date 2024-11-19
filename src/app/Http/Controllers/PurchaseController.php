@@ -132,34 +132,13 @@ class PurchaseController extends Controller
             ]],
             'mode' => 'payment',
             'success_url' => route('purchaseComplete', [
-                'item_id' => $itemId,// item_idをクエリパラメータに含める（stripe決済完了後に「」メソッドでデータベース登録する）
-                'address_id' => $addressId, // address_idをクエリパラメータに含める（stripe決済完了後に「」メソッドでデータベース登録する）
+                'item_id' => $itemId,// item_idをクエリパラメータに含める（stripe決済完了後に「completePurchase」メソッドでデータベース登録する）
+                'address_id' => $addressId, // address_idをクエリパラメータに含める（stripe決済完了後に「completePurchase」メソッドでデータベース登録する）
             ]),
             'cancel_url' => route('item.index'),
         ]);
         return $session; // セッションオブジェクトを返す
     }
-
-    // ユーザーがStripe決済処理後に以下のメソッドでpurchasesテーブルに登録してデータベース更新
-    public function successRedirect(Request $request)
-    {
-        dd($request->all());
-
-        $itemId = $request->input('item_id');
-        $userId = Auth::id();
-        $addressId = $request->session()->get('address_id');
-        $paymentMethod = 'カード支払い';
-
-        Purchase::create([
-            'user_id' => $userId,
-            'item_id' => $itemId,
-            'payment_method' => $paymentMethod,
-            'address_id' => $addressId,
-        ]);
-
-        return view('purchase.thanks', compact('userId'));
-    }
-
 
     public function validatePurchase(PurchaseRequest $request)
     {
