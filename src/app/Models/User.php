@@ -22,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail // （変更後：
         'name',
         'email',
         'password',
+        'profile_image'
     ];
 
     /**
@@ -55,9 +56,14 @@ class User extends Authenticatable implements MustVerifyEmail // （変更後：
         return $this->hasMany(Purchase::class);
     }
 
-    // ユーザーは複数のいいねを持つ
-    public function likes()
-{
-    return $this->hasMany(Like::class);
-}
+        // ユーザーは複数のいいねを持つ
+        public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class);
+    }
 }
