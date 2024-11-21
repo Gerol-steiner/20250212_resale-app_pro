@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Condition;
+use Illuminate\Http\UploadedFile;
 
 class ItemRegistrationTest extends TestCase
 {
@@ -45,8 +46,16 @@ public function test_item_can_be_stored_correctly_with_mocked_image()
         $this->fail('カテゴリーまたは商品の状態が見つかりませんでした。');
     }
 
-    // ダミー画像パスを設定
-    $dummyImageData = 'data:image/png;base64,' . base64_encode(random_bytes(128));
+    // テスト用ダミー画像ファイルを作成
+    $dummyFilePath = sys_get_temp_dir() . '/test_image.png';
+    file_put_contents($dummyFilePath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkBAUbWfwAAAABJRU5ErkJggg=='));
+    $dummyImageFile = new UploadedFile(
+        $dummyFilePath,
+        'test_image.png',
+        'image/png',
+        null,
+        true // テストファイルとしてマーク
+    );
 
     // 出品フォームに入力するデータを作成
     $itemData = [
@@ -55,22 +64,31 @@ public function test_item_can_be_stored_correctly_with_mocked_image()
         'item_description' => 'これはテスト商品の説明です。',
         'item_price' => 12345,
         'condition_id' => $condition->id,
-        'category_ids' => $categories->pluck('id')->toArray(),
-        'cropped_image' => $dummyImageData, // ダミー画像
+        'category_ids' => $categories->pluck('id')->toArray(), // カテゴリIDの配列
+        'cropped_image' => 'data:image/png;base64,' . base64_encode('dummy_image_data'), // クロップ後のダミーデータ
+        'item_image' => $dummyImageFile, // ダミー画像ファイル
     ];
-
-    dump($itemData);
 
     // 商品出品ページを開く
     $response = $this->get(route('sell.show'));
     $response->assertStatus(200);
 
+    dump('■ $itemData: ' . json_encode($itemData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    dump('■ item_image properties: ', [
+        'path' => $itemData['item_image']->getPath(),
+        'filename' => $itemData['item_image']->getClientOriginalName(),
+        'mimeType' => $itemData['item_image']->getClientMimeType(),
+        'isValid' => $itemData['item_image']->isValid(),
+    ]);
+
     // 商品を出品するリクエストを送信
     $response = $this->post(route('item.store'), $itemData);
 
+        $response->assertSessionHasNoErrors();
+
     // 正しいリダイレクト先に遷移したことを確認
     $response->assertRedirect(route('item.index'));
-    //$response->assertSessionHas('success', '商品が出品されました。');
+    $response->assertSessionHas('success', '商品が出品されました。');
 
     // items テーブルにデータが保存されていることを確認
     $this->assertDatabaseHas('items', [
@@ -78,17 +96,16 @@ public function test_item_can_be_stored_correctly_with_mocked_image()
         'name' => $itemData['item_name'],
         'brand' => $itemData['brand'],
         'description' => $itemData['item_description'],
-        //'price' => $itemData['item_price'],
-        //'condition_id' => $itemData['condition_id'],
-        //'image_url' => $mockedImagePath, // 画像パスが保存されているか確認
+        'price' => $itemData['item_price'],
+        'condition_id' => $itemData['condition_id'],
     ]);
 
     // カテゴリーの関連付けが正しいことを確認
     $item = Item::where('name', $itemData['item_name'])->first();
     $this->assertNotNull($item);
-    $this->assertEquals($categories->pluck('id')->sort()->values(), $item->categories->pluck('id')->sort()->values());
+    $this->assertEqualsCanonicalizing($categories->pluck('id')->toArray(), $item->categories->pluck('id')->toArray());
+    dump('■ $item: ' . json_encode($item, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-    dump('商品出品テストが成功しました: item_id=' . $item->id);
-}
-
+    dump('商品出品画面に入力した情報がデータベースに正常に登録されていることを確認しました');
+    }
 }
