@@ -42,7 +42,7 @@ class VerificationController extends Controller
         }
 
         // ■ ハッシュが一致しない不正なケース
-        return redirect()->route('login')
+        return redirect()->route('login');
     }
 
 }
