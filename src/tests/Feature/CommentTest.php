@@ -45,8 +45,8 @@ class CommentTest extends TestCase
 
                 $this->actingAs($user);
 
-        dump('選ばれたuserのid: ' . $user->id);
-        dump('選ばれたitemのid: ' . $item->id);
+        // dump('選ばれたuserのid: ' . $user->id);
+        // dump('選ばれたitemのid: ' . $item->id);
 
         // 3. 商品詳細ページを開く
         $response = $this->get("/item/{$item->id}");
@@ -57,7 +57,7 @@ class CommentTest extends TestCase
         // コントローラのメソッドにて取得されたコメント数を取得
         $initialCommentsCount = $itemFromView->comments_count;
 
-        dump('選ばれたitemのコメント数（コメント投稿前）: ' . $initialCommentsCount);
+        // dump('選ばれたitemのコメント数（コメント投稿前）: ' . $initialCommentsCount);
 
                 // コメント内容
         $commentContent = 'テストコメント';
@@ -79,7 +79,7 @@ class CommentTest extends TestCase
                 // コメント数の取得
         $updatedItem = Item::withCount(['comments'])->find($item->id);
 
-        dump('選ばれたitemのコメント数（コメント投稿後）' . $updatedItem->comments_count);
+        // dump('選ばれたitemのコメント数（コメント投稿後）' . $updatedItem->comments_count);
 
         // 期待されるコメント数（元のコメント数 + 1）
         $expectedCommentsCount = Comment::where('item_id', $item->id)->count();

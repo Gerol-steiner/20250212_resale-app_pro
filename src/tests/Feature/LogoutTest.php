@@ -32,10 +32,11 @@ class LogoutTest extends TestCase
         // 2. ログアウトボタンを押す
         $response = $this->post('/logout');
 
-        // リダイレクトされることを確認（ログアウト後のリダイレクト先に応じて変更してください）
+        // リダイレクトされることを確認
         $response->assertRedirect('/login');
 
         // ユーザーが認証されていないことを確認
         $this->assertGuest();
+        dump('正常にログアウト可能なことを確認しました');
     }
 }

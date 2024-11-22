@@ -58,7 +58,7 @@ class ItemMyListTest extends TestCase
         $response->assertDontSee($unlikedItem->name);
 
         // デバッグ出力
-        dump('マイリストタブのテストが正常に完了しました。');
+        dump('いいねした商品のみが表示されることを確認しました。');
     }
 
     public function test_authenticated_user_sees_sold_label_for_liked_and_purchased_items_in_mylist()
@@ -122,11 +122,56 @@ class ItemMyListTest extends TestCase
         $response->assertStatus(200);
 
         // 3. 購入していない商品には「Sold」ラベルが表示されないことを確認
-        // ユーザー2のアイテムは表示されないため、ここで確認できます
         $response->assertDontSee('<img src="' . asset('images/sold-label.svg') . '" alt="Sold" class="sold-label">', false);
 
         // デバッグ出力
-        dump('マイリストタブの「Sold」ラベルのテスト正常に完了しました。');
+        dump('購入済み商品にのみ「Sold]ラベルが表示されることを確認しました');
+    }
+
+    public function test_user_does_not_see_own_items_on_items_list()
+    {
+        // データベースをシード
+        $this->seed([
+            UsersTableSeeder::class,
+            CategoriesTableSeeder::class,
+            ConditionsTableSeeder::class,
+            ItemsTableSeeder::class,
+        ]);
+
+        // ユーザーとアイテムを見つけるまで繰り返す
+        do {
+            // シードされたユーザーからランダムに選択
+            $user = User::inRandomOrder()->first();
+
+            // 購入されていない商品を取得
+            $unpurchasedItems = Item::doesntHave('purchases')->get();
+
+            // ユーザーが出品した購入されていない商品を取得
+            $userItem = $unpurchasedItems->where('user_id', $user->id)->first();
+
+            // ユーザーが出品していない購入されていない商品を取得
+            $otherItem = $unpurchasedItems->where('user_id', '!=', $user->id)->first();
+
+            // 条件に合うアイテムが見つかるまで繰り返す
+        } while (!$userItem || !$otherItem);
+
+        // ユーザーとしてログイン
+        $this->actingAs($user);
+
+        // 商品一覧画面を開く
+        $response = $this->get('/');
+
+        // ステータスコードが200であることを確認
+        $response->assertStatus(200);
+
+        // 自分が出品した商品が表示されていないことを確認
+        $response->assertDontSee($userItem->name);
+
+        // 自分が出品していない商品が表示されていることを確認
+        $response->assertSee($otherItem->name);
+
+        // デバッグ出力
+        dump('自分の出品した商品が表示されていないことを確認しました。');
     }
 
 
@@ -163,7 +208,7 @@ class ItemMyListTest extends TestCase
         $response->assertDontSee($likedItem->name);
 
         // デバッグ出力
-        dump('未認証ユーザーのマイリストタブのテストが正常に完了しました。');
+        dump('未認証ユーザーのマイリストタブに何も表示されないことを確認しました');
     }
 }
 

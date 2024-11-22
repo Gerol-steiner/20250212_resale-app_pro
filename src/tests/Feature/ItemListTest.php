@@ -125,7 +125,7 @@ public function test_sold_label_is_displayed_for_purchased_items()
         $response->assertSee($otherItem->name);
 
         // デバッグ出力
-        dump('認証済みユーザーの商品一覧テストが正常に完了しました。');
+        dump('自分が出品した商品が商品一覧に表示されていないことを確認しました');
         
     }
 }

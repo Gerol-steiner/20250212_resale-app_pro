@@ -127,10 +127,12 @@ class LoginTest extends TestCase
             'password' => 'password',
         ]);
 
-        // リダイレクトされることを確認（ログイン後のリダイレクト先に応じて変更してください）
+        // リダイレクトされることを確認
         $response->assertRedirect('/');
 
         // ユーザーが認証されていることを確認
         $this->assertAuthenticated();
+        dump('正しい情報が入力され、正常にログインできることが確認できました');
+
     }
 }

@@ -52,8 +52,8 @@ class PurchaseTest extends TestCase
         }
 
         // 条件を満たすユーザーとアイテムをデバッグ出力
-        dump('User ID: ' . $user->id);
-        dump('Item ID: ' . $item->id);
+        // dump('User ID: ' . $user->id);
+        // dump('Item ID: ' . $item->id);
 
         $address = Address::where('user_id', $user->id)
         ->latest('id')
@@ -89,10 +89,10 @@ class PurchaseTest extends TestCase
         ]);
 
             // ⑤ 最新の購入レコードを取得してデバッグ出力
-    $latestPurchase = Purchase::latest('id')->first();
+        $latestPurchase = Purchase::latest('id')->first();
 
-    // 各値をデバッグ出力
-    dump('「コンビニ支払い」による購入処理が正常に完了し、purchasesテーブルへ登録されたことを確認しました。');
+        // 各値をデバッグ出力
+        dump('「コンビニ支払い」による購入処理が正常に完了し、purchasesテーブルへ登録されたことを確認しました。');
     }
 
     public function test_card_payment()
@@ -118,8 +118,8 @@ class PurchaseTest extends TestCase
         }
 
         // 条件を満たすユーザーとアイテムをデバッグ出力
-        dump('User ID: ' . $user->id);
-        dump('Item ID: ' . $item->id);
+        // dump('User ID: ' . $user->id);
+        // dump('Item ID: ' . $item->id);
 
         $address = Address::where('user_id', $user->id)
             ->latest('id')
@@ -147,7 +147,7 @@ class PurchaseTest extends TestCase
         // レスポンスが成功であることを確認し、StripeのセッションIDを取得
         $response->assertJson(['success' => true]);
         $data = $response->json();
-        dump('Stripe Session ID: ' . $data['session_id']);
+        // dump('Stripe Session ID: ' . $data['session_id']);
 
         // Stripeのチェックアウトセッション作成が成功したことを確認
         $this->assertArrayHasKey('session_id', $data);
@@ -251,8 +251,8 @@ class PurchaseTest extends TestCase
 
         $itemHtml = $matches[0];
 
-        dump('$item->id： ' . $item->id);
-        dump('$item->name： ' . $item->name);
+        // dump('$item->id： ' . $item->id);
+        // dump('$item->name： ' . $item->name);
         // デバッグ用（購入した商品の画像表示部のHTML）
         //dump($itemHtml);
 
@@ -314,7 +314,7 @@ class PurchaseTest extends TestCase
         $response = $this->postJson(route('validate.purchase'), $purchaseRequestPayload);
         $response->assertJson(['success' => true]);
         $data = $response->json();
-        dump('Stripe Session ID: ' . $data['session_id']);
+        // dump('Stripe Session ID: ' . $data['session_id']);
         $this->assertArrayHasKey('session_id', $data);
 
         $successUrl = route('purchaseComplete', [
@@ -338,6 +338,7 @@ class PurchaseTest extends TestCase
 
         // ⑦ 今回購入した商品が表示されていることを確認
         $response->assertSee($item->name);
+        dump('購入した商品がマイページの「購入した商品」一覧に表示されていることを確認しました');
     }
 
 

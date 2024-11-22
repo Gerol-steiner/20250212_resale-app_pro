@@ -49,7 +49,7 @@ class ItemSearchTest extends TestCase
         $response->assertDontSee('サンプル商品', false);
 
         // デバッグ出力
-        dump('検索機能が正常に動作しています。');
+        dump('商品一覧画面で検索機能（部分一致検索）が正常に動作しています。');
     }
 
 
@@ -64,7 +64,7 @@ class ItemSearchTest extends TestCase
         ]);
 
         // 検索キーワードを設定
-        $searchKeyword = 'テスト'; // 例: ここに実際のテスト用キーワードを入れる
+        $searchKeyword = 'テスト'; // テスト用キーワード
 
         // 商品を作成し、検索キーワードに部分一致する商品を含める
         $item1 = Item::factory()->create(['name' => 'テスト商品']);

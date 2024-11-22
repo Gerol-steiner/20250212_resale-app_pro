@@ -37,7 +37,8 @@ class ItemDetailTest extends TestCase
         $user = User::first(); // 最初のユーザーを取得
         // 商品を取得（ItemsTableSeederで作成された商品を使用）
         // コメントが存在する最初の商品を取得
-        $item = Item::has('comments')->first();
+        $item = Item::withCount(['likes', 'comments'])->has('comments')->first();
+
 
         // テストユーザーとしてログイン
         $this->actingAs($user);
@@ -61,7 +62,6 @@ class ItemDetailTest extends TestCase
         // カテゴリーを確認
         foreach ($item->categories as $category) {
             $response->assertSee($category->name, false);
-            dump('$category->name: ' . $category->name);
         }
 
         // デバッグ出力
@@ -74,19 +74,13 @@ class ItemDetailTest extends TestCase
         // item_idが一致する最初のコメントを取得
         $comment = Comment::where('item_id', $item->id)->first();
 
-
-        $response->dump();
-                dump('$item->comments_count: ' . $item->comments_count);
-        dump('$comment->user->profile_name: ' . $comment->user->profile_name);
-        dump('$comment->content: ' . $comment->content);
-
         // コメントに関連する情報を確認
         $response->assertSee($comment->user->profile_name, false);
         // 最初の10文字を比較
         $response->assertSee(e(substr($comment->content, 0, 30)), false);
 
         // デバッグ出力
-        dump('商品詳細ページが正常に表示され、全ての情報が正しく表示されています。');
+        dump('商品詳細ページが正常に表示され、全ての情報が正しく表示されていることを確認しました。');
     }
 
 

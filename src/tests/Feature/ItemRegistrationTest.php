@@ -73,13 +73,13 @@ public function test_item_can_be_stored_correctly_with_mocked_image()
     $response = $this->get(route('sell.show'));
     $response->assertStatus(200);
 
-    dump('■ $itemData: ' . json_encode($itemData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    dump('■ item_image properties: ', [
-        'path' => $itemData['item_image']->getPath(),
-        'filename' => $itemData['item_image']->getClientOriginalName(),
-        'mimeType' => $itemData['item_image']->getClientMimeType(),
-        'isValid' => $itemData['item_image']->isValid(),
-    ]);
+    // dump('■ $itemData: ' . json_encode($itemData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    // dump('■ item_image properties: ', [
+    //     'path' => $itemData['item_image']->getPath(),
+    //     'filename' => $itemData['item_image']->getClientOriginalName(),
+    //     'mimeType' => $itemData['item_image']->getClientMimeType(),
+    //     'isValid' => $itemData['item_image']->isValid(),
+    // ]);
 
     // 商品を出品するリクエストを送信
     $response = $this->post(route('item.store'), $itemData);
@@ -104,7 +104,7 @@ public function test_item_can_be_stored_correctly_with_mocked_image()
     $item = Item::where('name', $itemData['item_name'])->first();
     $this->assertNotNull($item);
     $this->assertEqualsCanonicalizing($categories->pluck('id')->toArray(), $item->categories->pluck('id')->toArray());
-    dump('■ $item: ' . json_encode($item, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    // dump('■ $item: ' . json_encode($item, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
     dump('商品出品画面に入力した情報がデータベースに正常に登録されていることを確認しました');
     }

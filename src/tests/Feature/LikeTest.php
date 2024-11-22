@@ -38,13 +38,20 @@ class LikeTest extends TestCase
     public function test_user_can_like_an_item()
     {
 
-        // 1. まだいいねしていない商品を持つユーザーを取得
-        $user = User::whereDoesntHave('likes')->first();
+    // 1. テスト用のユーザーと商品を準備
+    $user = User::factory()->create(); // テスト用ユーザーを作成
 
-        // ユーザーが見つからない場合は、ランダムにユーザーを選択
-        if (!$user) {
-            dump('test_user_can_like_an_item()において条件に一致するユーザーが見つかりませんでした。もう一度実行してください');
-        }
+    // このユーザーがまだ「いいね」していない商品を準備
+    $item = Item::factory()->create([
+        'user_id' => User::factory()->create()->id, // 別のユーザーが出品した商品
+    ]);
+
+    // 商品が少なくとも1つは必要なので、条件を満たさない場合に追加作成
+    if (!$item) {
+        $item = Item::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+    }
 
         $this->actingAs($user);
 
@@ -61,8 +68,8 @@ class LikeTest extends TestCase
         }
 
         // 選ばれたuserとitemを出力
-        dump('選ばれたuserのid: ' . $user->id);
-        dump('選ばれたitemのid: ' . $item->id);
+        // dump('選ばれたuserのid: ' . $user->id);
+        // dump('選ばれたitemのid: ' . $item->id);
 
         // 3. 商品詳細ページを開く
         $response = $this->get("/item/{$item->id}");
@@ -86,7 +93,7 @@ class LikeTest extends TestCase
 
         $initialLikesCount = $itemFromView->likes_count;
 
-        dump('選ばれたitemのいいね数（いいね押下前）: ' . $initialLikesCount);
+        // dump('選ばれたitemのいいね数（いいね押下前）: ' . $initialLikesCount);
 
 
         // 4. いいねアイコンを押下（AJAXリクエストをシミュレート）
@@ -96,10 +103,10 @@ class LikeTest extends TestCase
         // likesテーブルの最新レコードを取得
         $latestLike = Like::latest('id')->first();
 
-        dump('【likesテーブルの最新レコード（いいね押下後）】');
-        dump('ID: ' . $latestLike->id);
-        dump('User ID: ' . $latestLike->user_id);
-        dump('Item ID: ' . $latestLike->item_id);
+        // dump('【likesテーブルの最新レコード（いいね押下後）】');
+        // dump('ID: ' . $latestLike->id);
+        // dump('User ID: ' . $latestLike->user_id);
+        // dump('Item ID: ' . $latestLike->item_id);
 
 
         // 5. likesテーブルに登録されたか確認
@@ -109,7 +116,7 @@ class LikeTest extends TestCase
         // 6. いいねの合計値が更新されたか確認
         $updatedItem = Item::withCount(['likes'])->find($item->id);
 
-        dump('いいね数: ' . $updatedItem->likes_count);
+        // dump('いいね数: ' . $updatedItem->likes_count);
 
         $this->assertEquals($initialLikesCount + 1, $updatedItem->likes_count);
 
@@ -131,7 +138,7 @@ class LikeTest extends TestCase
         $this->assertStringContainsString('star-filled.svg', $mainContent);
         $this->assertStringNotContainsString('star-outline.svg', $mainContent);
 
-        dump('いいね押下により「star-filled.svg（色付きアイコン）」の表示を確認');
+        dump('いいね押下により「star-filled.svg（色付きアイコン）」の表示を確認しました');
     }
 
     public function test_user_can_unlike_an_item_and_likes_count_decreases()
@@ -156,15 +163,15 @@ class LikeTest extends TestCase
         $this->actingAs($user);
 
         // 選ばれたuserとitemを出力
-        dump('選ばれたuserのid: ' . $user->id);
-        dump('選ばれたitemのid: ' . $item->id);
+        // dump('選ばれたuserのid: ' . $user->id);
+        // dump('選ばれたitemのid: ' . $item->id);
 
 
         // 最新のいいねレコードの情報をダンプ
-        dump('【該当likeレコード（いいね押下前）】');
-        dump('ID: ' . $initialLike->id);
-        dump('User ID: ' . $initialLike->user_id);
-        dump('Item ID: ' . $initialLike->item_id);
+        // dump('【該当likeレコード（いいね押下前）】');
+        // dump('ID: ' . $initialLike->id);
+        // dump('User ID: ' . $initialLike->user_id);
+        // dump('Item ID: ' . $initialLike->item_id);
 
 
         //  商品詳細ページを開く
@@ -176,7 +183,7 @@ class LikeTest extends TestCase
 
         $initialLikesCount = $itemFromView->likes_count;
 
-        dump('該当itemのいいね数（ボタン押下前）: ' . $initialLikesCount);
+        // dump('該当itemのいいね数（ボタン押下前）: ' . $initialLikesCount);
 
 
         // 4. いいねアイコンを押下（AJAXリクエストをシミュレート）
@@ -184,20 +191,21 @@ class LikeTest extends TestCase
         $response->assertJson(['success' => true]);
 
         // いいね押下により該当するlikeレコードがテーブルから削除されていることを確認
-        $updatedLike = Like::where('user_id', $user->id)->where('item_id', $item->id)->first();
+        $updatedLike = Like::where('user_id', $user->id)->where('item_id', $item->id)->withoutGlobalScopes()->first();
         $this->assertNull($updatedLike, 'The like record should be null after unliking the item.');
         dump('いいね押下により該当likesレコードが削除されたことを確認しました');
 
         // 6. いいねの合計値が更新されたか確認
         $updatedItem = Item::withCount(['likes'])->find($item->id);
 
-        dump('該当itemのいいね数（ボタン押下後）:  ' . $updatedItem->likes_count);
+        // dump('該当itemのいいね数（ボタン押下後）:  ' . $updatedItem->likes_count);
 
         $this->assertEquals($initialLikesCount - 1, $updatedItem->likes_count);
 
         // 7. 再度商品詳細ページを開いて、更新された「いいね」数が表示されているか確認
         $response = $this->get("/item/{$item->id}");
         $response->assertSee(strval($initialLikesCount - 1), false);
+        dump('再度いいねすることで、いい値合計値が減少表示されることを確認しました');
 
         // レスポンスからHTMLを取得（<script>部を含む）
         $htmlContent = $response->getContent();
@@ -210,7 +218,7 @@ class LikeTest extends TestCase
         $this->assertStringContainsString('star-outline.svg', $mainContent);
         $this->assertStringNotContainsString('star-filled.svg', $mainContent);
 
-        dump('いいね押下により「star-outline.svg（白抜きアイコン）」の表示を確認');
+        dump('いいね押下により「star-outline.svg（白抜きアイコン）」の表示を確認しました');
     }
 }
 
