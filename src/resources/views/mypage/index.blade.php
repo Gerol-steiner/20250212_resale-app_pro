@@ -47,7 +47,7 @@
                     <div class="profile-details">
                         <!-- プロフィール画像があれば表示 -->
                         <img src="{{ $profileImage ? asset($profileImage) : asset('images/user_icon_default.png') }}" alt="プロフィール写真" class="profile-image">
-                        <span class="user-name">{{ $userName }}</span> <!-- ユーザー名を表示 -->
+                        <span class="user-name">{{ $userName ?? 'guest user' }}</span> <!-- ユーザー名がnullなら'guest user' -->
                     </div>
                     <a href="/mypage/profile" class="edit-profile-button">プロフィールを編集</a> <!-- プロフィール編集ボタン -->
                 </div>
