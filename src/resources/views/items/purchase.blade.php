@@ -119,19 +119,19 @@
                     </div>
                     <div class="address-details">
 
-                        @if ($address->postal_code)
+                        @if (!empty($address->postal_code))
                             <p>郵便番号: {{ $address->postal_code }}</p>
                         @else
                             <p>郵便番号: 　（未設定）</p>
                         @endif
 
-                        @if ($address->address)
+                        @if (!empty($address->address))
                             <p>住所: {{ $address->address }}</p>
                         @else
                             <p>住所: 　（未設定）</p>
                         @endif
 
-                        @if ($address->building)
+                        @if (!empty($address->building))
                             <p>建物名: {{ $address->building }}</p>
                         @else
                             <p>建物名: 　（未設定）</p>
