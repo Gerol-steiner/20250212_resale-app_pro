@@ -14,7 +14,7 @@ class CommentsTableSeeder extends Seeder
      */
     public function run()
     {
-        $numberOfComments = 20; // 作成したいコメントの数
+        $numberOfComments = 10; // 作成したいコメントの数
 
         // ファクトリーを使ってダミーデータを生成
         Comment::factory()->count($numberOfComments)->create();

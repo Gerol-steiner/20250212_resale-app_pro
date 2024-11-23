@@ -14,7 +14,7 @@ class LikesTableSeeder extends Seeder
      */
     public function run()
     {
-        $numberOfLikes = 30; // 作成したい「いいね」の数
+        $numberOfLikes = 5; // 作成したい「いいね」の数
 
         // ファクトリーを使ってダミーデータを生成
         Like::factory()->count($numberOfLikes)->create();

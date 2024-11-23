@@ -16,7 +16,7 @@ class AddressesTableSeeder extends Seeder
     public function run()
     {
         // ユーザーをランダムに15人取得
-        $users = User::inRandomOrder()->take(15)->get();
+        $users = User::inRandomOrder()->take(8)->get();
 
         foreach ($users as $user) {
             Address::factory()->create(['user_id' => $user->id]);
