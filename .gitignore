@@ -72,5 +72,8 @@ docker-compose.local.yml
 .DS_Store  # macOSのファイル
 Thumbs.db  # Windowsのファイル
 
-# MySQLのデータディレクトリ内のPEMファイルを無視
+# MySQLのデータディレクトリ内のPEMファイル（証明書ファイル）を無視
 /docker/mysql/data/*.pem
+
+# データベース永続化ディレクトリを無視
+/docker/mysql/data/
