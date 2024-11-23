@@ -24,6 +24,9 @@ class CommentController extends Controller
         // ユーザー情報を取得
         $user = Auth::user();
 
+        // プロフィール名がnullの場合は"guest user"を設定
+        $profileName = $user->profile_name ?? 'guest user';
+
         // プロフィール画像のURLを生成
         $profileImageUrl = $user->profile_image ? asset('storage/uploads/profiles/' . basename($user->profile_image)) : asset('images/user_icon_default.png');
 
@@ -31,7 +34,7 @@ class CommentController extends Controller
             'success' => true,
             'comment' => $comment,
             'user' => [
-                'profile_name' => $user->profile_name,
+                'profile_name' => $profileName,
                 'profile_image' => $profileImageUrl,
             ]
         ]);
