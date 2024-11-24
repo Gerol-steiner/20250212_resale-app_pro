@@ -33,9 +33,6 @@
         </div>
     </header>
 
-    <!-- 開発用 -->
-    <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
-
     <main>
         <div class="message-container">
             <div class="message">商品の購入が完了しました</h2>

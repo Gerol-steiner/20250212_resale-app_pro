@@ -42,7 +42,6 @@
 
     <main>
             <nav class="item-filter-nav">
-                <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
                 <!--フラッシュメッセージ 「メールアドレスは既に認証されています」-->
                 <!--フラッシュメッセージ 「メールアドレスは既に認証されています。ログインしました。」-->
                 @if(session('info'))

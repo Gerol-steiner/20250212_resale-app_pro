@@ -24,7 +24,6 @@ use App\Http\Controllers\Auth\VerificationController; // メール認証用
 |
 */
 
-// Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 // ログアウト

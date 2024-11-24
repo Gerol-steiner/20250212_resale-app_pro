@@ -33,10 +33,6 @@
         </div>
     </header>
 
-    <!-- 開発用 -->
-    <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
-    <div>商品ID: {{ $item->id }}</div>
-
     <main>
         <div class="main-container">
 

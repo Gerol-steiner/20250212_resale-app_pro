@@ -41,7 +41,6 @@
     <main>
 
             <nav class="item-filter-nav">
-                <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
 
                 <div class="profile-info">
                     <div class="profile-details">

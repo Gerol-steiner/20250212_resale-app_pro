@@ -54,8 +54,6 @@
         </div>
     </header>
 
-        <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>  <!-- 開発用 -->
-
     <main>
 
 

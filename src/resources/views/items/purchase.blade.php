@@ -54,13 +54,6 @@
         </div>
     </header>
 
-    <!-- 開発用 -->
-    <div>user_id : <?php echo $userId ?? '未ログイン'; ?> (※ 開発用)</div>
-    <div>商品ID: {{ $item->id }}</div>
-    <div>アドレスID：{{ $address->id ?? 'Null' }}</div>
-    <div>is_default：{{ $address->is_default ?? 'Null' }}</div>
-    
-
     <main>
 
         <div class="main-container">

@@ -127,7 +127,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px auto;  /* 上下のマージン */
+    margin: 35px auto;  /* 上下のマージン */
 }
 
 .profile-image {
@@ -196,11 +196,10 @@ body {
 }
 
 .item-card {
+    /*width 25%から引いたmarginの半分*/
     width: calc(25% - 70px);
     /*１行に4枚表示させる*/
     margin: 35px;
-    /*width 25%から引いたmarginの半分*/
-    border: 1px solid rgb(0, 34, 255);
     position: relative;
     /*「Sold」ラベルを左上に表示させるため*/
 }
@@ -352,7 +351,7 @@ body {
     /*「プロフィール」ゾーン*/
     .profile-info {
         width: 90%;
-        margin: 10px auto;
+        margin: 35px auto;
         /* 上下のマージン */
     }
 

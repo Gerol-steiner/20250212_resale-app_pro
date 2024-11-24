@@ -67,6 +67,7 @@ main {
 }
 
 .main-container {
+    margin-top: 70px;
     width: calc(100% - 370px);
     display: flex;
 }
