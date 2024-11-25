@@ -71,25 +71,25 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
    ```
 3. `.env`ファイルに必要な情報を入力します。
 
-   - `DB_`セクションにデータベースの情報を入力。
-     ```bash
-     DB_DATABASE=laravel_db
-     DB_USERNAME=laravel_user
-     DB_PASSWORD=laravel_pass
-     ```
-   - `MAIL_`セクションにメール設定を入力。
-     ```bash
-     MAIL_USERNAME=（各自設定）
-     MAIL_PASSWORD=（各自設定）
-     MAIL_FROM_ADDRESS=（各自設定）
-     ```
-   - `STRIPE_`セクションに Stripe の公開キーと秘密キーを入力。
+- `DB_`セクションにデータベースの情報を入力。
+  ```bash
+  DB_DATABASE=laravel_db
+  DB_USERNAME=laravel_user
+  DB_PASSWORD=laravel_pass
+  ```
+- `MAIL_`セクションにメール設定を入力。
+  ```bash
+  MAIL_USERNAME=（各自設定）
+  MAIL_PASSWORD=（各自設定）
+  MAIL_FROM_ADDRESS=（各自設定）
+  ```
+- `STRIPE_`セクションに Stripe の公開キーと秘密キーを入力。
 
-   ```bash
-   STRIPE_PUBLISHABLE_KEY=（各自設定）
-   STRIPE_SECRET_KEY=（各自設定）
+  ```bash
+  STRIPE_PUBLISHABLE_KEY=（各自設定）
+  STRIPE_SECRET_KEY=（各自設定）
 
-   ```
+  ```
 
 4. 補足：php コンテナから退出したいときは、以下のコマンドで退出します。
    ```bash
