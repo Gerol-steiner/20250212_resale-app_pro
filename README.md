@@ -33,9 +33,14 @@ GitHubのリポジトリからプロジェクトをローカル環境にコピ�
 1. 以下のコマンドを実行してコンテナを構築・起動します。
    ```bash
    docker-compose up -d --build
-2. コンテナが正常に起動していることを確認します。
+2. 起動後、コンテナが正常に起動していることを確認します。
    ```bash
    docker ps
+3. 以下のコンテナが動作していることを確認してください。
+- PHP
+- MySQL
+- Nginx
+- phpMyAdmin
 
 ### 3. 「.env」ファイルの設定
 
@@ -51,8 +56,19 @@ GitHubのリポジトリからプロジェクトをローカル環境にコピ�
    cp .env.example .env
 3. `.env`ファイルに必要な情報を入力します。
     - `DB_`セクションにデータベースの情報を入力。
+      ```bash
+      DB_DATABASE=laravel_db
+      DB_USERNAME=laravel_user
+      DB_PASSWORD=laravel_pass
     - `MAIL_`セクションにメール設定を入力。
+      ```bash
+      MAIL_USERNAME=（各自設定）
+      MAIL_PASSWORD=（各自設定）
+      MAIL_FROM_ADDRESS=（各自設定）
     - `STRIPE_`セクションにStripeの公開キーと秘密キーを入力。
+   ```bash
+   STRIPE_PUBLISHABLE_KEY=（各自設定）
+   STRIPE_SECRET_KEY=（各自設定）
   
 4. 補足：phpコンテナから退出したいときは、以下のコマンドで退出します。
    ```bash
@@ -163,14 +179,178 @@ GitHubのリポジトリからプロジェクトをローカル環境にコピ�
 1. 商品画像やプロフィール画像: 商品やプロフィール画像が正しい場所に配置されていない場合、アプリケーションが正常に動作しません。必ずダミーデータの画像をstorage/app/public/uploadsに移動してください。
 2. 権限の付与: 特にstorageディレクトリへの書き込み権限が不足している場合、エラーが発生します。権限設定を確実に行ってください。
 3. 環境依存: 上記の手順はLinuxを想定しています。WindowsやMacの場合、コマンドが異なる場合がありますので適宜読み替えてください。
+---
+## テスト環境と実行手順
+テスト用のデータベースを準備し、プロジェクトのテストを適切に実行できる環境を整えます。
 
-   ---
-   
-## 仕様技術（実行環境）
+### 1. テスト用データベースの作成
+
+#### 目的
+テスト用データベースを作成して、テスト実行時に使用できるようにする。
+
+#### 手順
+1. MySQLコンテナに入る  
+以下のコマンドでMySQLコンテナに接続します:
+```bash
+docker-compose exec mysql bash
+```
+
+3. MySQLにログイン  
+コンテナ内で以下を実行してMySQLにログインします:
+```bash
+mysql -u root -p
+```  
+※ パスワードは `docker-compose.yml` で設定した `MYSQL_ROOT_PASSWORD` を入力してください（例: `root`）。
+
+5. テスト用データベースの作成  
+以下のコマンドでデータベースを作成します:
+```bash
+CREATE DATABASE laravel_test; -- 任意の名前に変更可能  
+SHOW DATABASES; -- 作成したデータベースが表示されれば成功
+```
+
+7. ログアウトおよびコンテナ退出  
+以下を実行してMySQLからログアウトし、コンテナを退出します:
+```bash
+exit; -- MySQLログアウト  
+exit; -- コンテナから退出  
+```
+---
+
+### 2. テスト用環境設定
+
+#### 目的
+`.env.testing` を作成して、テスト用環境を設定する。
+
+#### 手順
+1. `.env.testing` を作成  
+プロジェクトのルートディレクトリで以下を実行します:
+```bash
+cp .env .env.testing
+```
+
+3. `.env.testing` の設定  
+必要に応じて以下を編集します:
+```bash
+APP_ENV=testing  
+APP_KEY=  # 空のままにしてください  
+DB_CONNECTION=mysql  
+DB_HOST=mysql  
+DB_PORT=3306  
+DB_DATABASE=laravel_test  # 先ほど作成したデータベース名  
+DB_USERNAME=laravel_user  # docker-compose.ymlで設定した値  
+DB_PASSWORD=laravel_pass  # docker-compose.ymlで設定した値  
+```
+
+5. アプリケーションキーの生成  
+以下のコマンドを実行してテスト用環境のキーを生成します:
+```bash
+php artisan key:generate --env=testing
+```
+7. 設定キャッシュのクリア（必要に応じて）  
+`.env.testing` の変更が反映されない場合に以下を実行してください:
+```bash
+php artisan config:clear
+```
+---
+
+### 3. テスト用マイグレーション
+
+#### 目的
+テスト用データベースにテーブルを作成する。
+
+#### 手順
+以下のコマンドでテーブルを作成します:
+```bash
+php artisan migrate --env=testing
+```
+---
+
+### 4. テストの実行
+
+#### 目的
+プロジェクトの機能が期待通り動作するか確認する。
+
+#### 手順
+以下のいずれかのコマンドを使用してテストを実行します:
+```bash
+php artisan test
+```  
+または、PHPUnitを直接使用する場合:  
+```bash
+vendor/bin/phpunit
+```
+**Docker環境で実行する場合**  
+PHPコンテナ内で以下を実行してください:
+```bash
+docker-compose exec php bash  
+php artisan test
+```
+---
+
+### 補足
+- **`phpunit.xml` の設定について**  
+`phpunit.xml` はプロジェクトに既に含まれているため、基本的に編集は不要です。特殊な要件がある場合のみ修正してください。
+
+- **テストデータの準備**  
+シードファイルを使用してテストデータを準備する場合、以下のコマンドを実行してください:
+```bash
+php artisan db:seed --env=testing
+```
+---
+## 使用技術（実行環境）
+以下の技術を使用しています：
+
+### **バックエンド**
+- Laravel Framework: 8.75
+- PHP: ^7.3 | ^8.0
+- Stripe SDK: ^16.2
+- Laravel Fortify: ^1.19
+- Laravel Sanctum: ^2.11
+- Laravel UI: ^3.4
+- Laravel Tinker: ^2.5
+
+### **フロントエンド**
+- Bootstrap: ^5.1.3
+- Axios: ^0.21
+- Laravel Mix: ^6.0.6
+- Sass: ^1.32.11
+
+### **その他**
+- MySQL: 8.0.26 (Docker公式イメージを使用)
+- Nginx: 1.21.1 (Docker公式イメージを使用)
+- Composer: 2.8.1
+- Docker: バージョンに依存せず最新の公式イメージを想定
+---
+## データベース設計
+以下は本アプリケーションで使用しているデータベースのER図です。
+
+![ER図](src/public/images/ER_diagram.png)
+
+---
+## アプリケーション URL 一覧
+
+### ユーザー向け主要画面
+- 開発環境トップページ: [http://localhost/](http://localhost/)
+- ユーザー登録: [http://localhost/register](http://localhost/register)
+- ログイン: [http://localhost/login](http://localhost/login)
+- マイページ: [http://localhost/mypage](http://localhost/mypage)
+- 商品一覧: [http://localhost/](http://localhost/)
+- 商品詳細: [http://localhost/item/{item_id}](http://localhost/item/{item_id})
+- 商品購入: [http://localhost/purchase/{id}](http://localhost/purchase/{id})
+- プロフィール編集：[http://localhost/mypage/profile](http://localhost/mypage/profile)
+
+### 開発者向けエンドポイント
+- いいね機能: [POST] [http://localhost/like/{item_id}](http://localhost/like/{item_id})
+- コメント機能: [POST] [http://localhost/item/{item_id}/comments](http://localhost/item/{item_id}/comments)
+
+### 認証関連
+- メール認証待ち: [http://localhost/register/pending](http://localhost/register/pending)
+- メール認証: [GET] [http://localhost/email/verify/{id}/{hash}](http://localhost/email/verify/{id}/{hash})
 
 
-
-
+正確なアプリケーションのルート構成は routes/web.php に定義されています。    
+必要に応じて、該当ファイルをご確認いただき、最新のルートや追加エンドポイントをご参照ください。
 
 
 
