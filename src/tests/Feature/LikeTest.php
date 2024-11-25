@@ -144,15 +144,24 @@ class LikeTest extends TestCase
     public function test_user_can_unlike_an_item_and_likes_count_decreases()
     {
 
-        // 1. likesテーブルに登録されている「いいね」をしているユーザーを取得
-        $user = User::whereHas('likes')->inRandomOrder()->first();
+    // 1. likesテーブルに登録されている「いいね」をしているユーザーを取得
+    $user = User::whereHas('likes')->inRandomOrder()->first();
 
+    // ループして、条件を満たす商品が見つかるまで繰り返す
+    $item = null;
+    while (is_null($item)) {
         // 2. 選択されたユーザーがいいねしている商品を取得し、自分が出品していないものを選ぶ
         $item = Item::where('user_id', '!=', $user->id)
             ->whereHas('likes', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
             ->first();
+
+        // もし商品が見つからなかった場合は、新しいユーザーを取得
+        if (is_null($item)) {
+            $user = User::whereHas('likes')->inRandomOrder()->first();
+        }
+    }
 
         // 3. likesテーブルから該当するレコードを取得
         $initialLike = Like::where('user_id', $user->id)
@@ -161,18 +170,6 @@ class LikeTest extends TestCase
 
         // 4．ログイン
         $this->actingAs($user);
-
-        // 選ばれたuserとitemを出力
-        // dump('選ばれたuserのid: ' . $user->id);
-        // dump('選ばれたitemのid: ' . $item->id);
-
-
-        // 最新のいいねレコードの情報をダンプ
-        // dump('【該当likeレコード（いいね押下前）】');
-        // dump('ID: ' . $initialLike->id);
-        // dump('User ID: ' . $initialLike->user_id);
-        // dump('Item ID: ' . $initialLike->item_id);
-
 
         //  商品詳細ページを開く
         $response = $this->get("/item/{$item->id}");

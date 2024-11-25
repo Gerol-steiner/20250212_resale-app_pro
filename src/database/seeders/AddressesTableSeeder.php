@@ -15,7 +15,7 @@ class AddressesTableSeeder extends Seeder
      */
     public function run()
     {
-        // ユーザーをランダムに15人取得
+        // ユーザーをランダムに8人取得
         $users = User::inRandomOrder()->take(8)->get();
 
         foreach ($users as $user) {

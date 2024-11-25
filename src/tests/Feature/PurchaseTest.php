@@ -55,10 +55,13 @@ class PurchaseTest extends TestCase
         // dump('User ID: ' . $user->id);
         // dump('Item ID: ' . $item->id);
 
-        $address = Address::where('user_id', $user->id)
-        ->latest('id')
-        ->first();
-
+        $address = Address::create([
+            'user_id' => $user->id,
+            'is_default' => true,
+            'address' => 'test_address',
+            'postal_code' => '123-4567',
+            'building' => 'test_building',
+        ]);
 
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);
@@ -123,8 +126,8 @@ class PurchaseTest extends TestCase
         // dump('Item ID: ' . $item->id);
 
         $address = Address::create([
-            'id' => 55,
             'user_id' => $user->id,
+            'is_default' => true,
             'address' => 'test_address',
             'postal_code' => '123-4567',
             'building' => 'test_building',
@@ -203,7 +206,13 @@ class PurchaseTest extends TestCase
             $this->fail('条件を満たすアイテムが見つかりませんでした。');
         }
 
-        $address = Address::where('user_id', $user->id)->latest('id')->first();
+        $address = Address::create([
+            'user_id' => $user->id,
+            'is_default' => true,
+            'address' => 'test_address',
+            'postal_code' => '123-4567',
+            'building' => 'test_building',
+        ]);
 
         // ユーザーをログイン
         $this->actingAs($user);
@@ -256,11 +265,6 @@ class PurchaseTest extends TestCase
 
         $itemHtml = $matches[0];
 
-        // dump('$item->id： ' . $item->id);
-        // dump('$item->name： ' . $item->name);
-        // デバッグ用（購入した商品の画像表示部のHTML）
-        //dump($itemHtml);
-
         // 抽出したHTMLに「sold」ラベルが含まれていることを確認
         $this->assertStringContainsString(
             '<img src="' . asset('images/sold-label.svg') . '" alt="Sold" class="sold-label">',
@@ -292,15 +296,12 @@ class PurchaseTest extends TestCase
         }
 
         $address = Address::create([
-            'id' => 80,
             'user_id' => $user->id,
+            'is_default' => true,
             'address' => 'test_address',
             'postal_code' => '123-4567',
             'building' => 'test_building',
         ]);
-
-        dump($address->id);
-        dump($address->postal_code);
 
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);

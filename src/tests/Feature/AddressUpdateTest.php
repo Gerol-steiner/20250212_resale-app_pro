@@ -98,7 +98,7 @@ class AddressUpdateTest extends TestCase
 
     public function test_address_id_is_registered_in_purchases_table()
     {
-        // ① シードデータから条件を満たすユーザーとアイテムを取得
+        // ユーザーとアイテムを取得
         $users = User::inRandomOrder()->get();
         $item = null;
 
@@ -117,7 +117,13 @@ class AddressUpdateTest extends TestCase
             $this->fail('条件を満たすアイテムが見つかりませんでした。');
         }
 
-        $address = Address::where('user_id', $user->id)->latest('id')->first();
+        $address = Address::create([
+            'user_id' => $user->id,
+            'is_default' => true,
+            'address' => 'test_address',
+            'postal_code' => '123-4567',
+            'building' => 'test_building',
+        ]);
 
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);
