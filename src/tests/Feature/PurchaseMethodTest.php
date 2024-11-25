@@ -59,8 +59,8 @@ class PurchaseMethodTest extends TestCase
         }
 
         // 条件を満たすユーザーとアイテムをデバッグ出力
-        dump('User ID: ' . $user->id);
-        dump('Item ID: ' . $item->id);
+        //dump('User ID: ' . $user->id);
+        //dump('Item ID: ' . $item->id);
 
         // ユーザーをログインさせる
         $this->actingAs($user);
@@ -81,6 +81,6 @@ class PurchaseMethodTest extends TestCase
     // ステータスコードが200であることを確認
     $postResponse->assertStatus(200);
 
-    $postResponse->dump();
+    //$postResponse->dump();
 }
 }

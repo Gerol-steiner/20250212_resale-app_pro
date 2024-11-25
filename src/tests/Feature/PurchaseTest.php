@@ -59,6 +59,7 @@ class PurchaseTest extends TestCase
         ->latest('id')
         ->first();
 
+
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);
 
@@ -121,9 +122,13 @@ class PurchaseTest extends TestCase
         // dump('User ID: ' . $user->id);
         // dump('Item ID: ' . $item->id);
 
-        $address = Address::where('user_id', $user->id)
-            ->latest('id')
-            ->first();
+        $address = Address::create([
+            'id' => 55,
+            'user_id' => $user->id,
+            'address' => 'test_address',
+            'postal_code' => '123-4567',
+            'building' => 'test_building',
+        ]);
 
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);
@@ -286,7 +291,16 @@ class PurchaseTest extends TestCase
             $this->fail('条件を満たすアイテムが見つかりませんでした。');
         }
 
-        $address = Address::where('user_id', $user->id)->latest('id')->first();
+        $address = Address::create([
+            'id' => 80,
+            'user_id' => $user->id,
+            'address' => 'test_address',
+            'postal_code' => '123-4567',
+            'building' => 'test_building',
+        ]);
+
+        dump($address->id);
+        dump($address->postal_code);
 
         // 条件を満たすユーザーをログイン
         $this->actingAs($user);
