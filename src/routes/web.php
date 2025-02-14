@@ -46,6 +46,13 @@ Route::get('/item/{item_id}', [ItemController::class, 'showDetail'])->name('item
 // 指定された商品IDに対するいいねを追加/削除
 Route::post('/like/{item_id}', [ItemController::class, 'toggleLike'])->middleware('auth');
 
+// マイページの表示
+Route::get('/mypage', [ItemController::class, 'mypage'])->name('mypage.index');
+
+// 取引チャット画面の表示
+Route::get('/transaction-chat/{item_id}', [ItemController::class, 'showTransactionChat'])->name('transaction.chat')->middleware('auth');
+
+
 // 商品詳細ページ
 // コメント登録
 Route::post('/item/{item_id}/comments', [CommentController::class, 'addComment'])->middleware('auth')->name('comments.add');
@@ -61,9 +68,6 @@ Route::get('/purchase/address/{item_id}', [AddressController::class, 'edit'])->n
 
 // 配送先住所の変更
 Route::post('/address/update', [AddressController::class, 'update'])->name('address.update');
-
-// マイページの表示
-Route::get('/mypage', [ItemController::class, 'mypage'])->name('mypage.index');
 
 // プロフィールの編集
 Route::get('/mypage/profile', [UserController::class, 'show'])->name('mypage.profile');

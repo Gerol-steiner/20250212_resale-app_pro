@@ -212,9 +212,10 @@ class ItemController extends Controller
         }
 
 
-        // 各アイテムに購入済みフラグを追加
+        // 各アイテムにフラグを追加
         foreach ($items as $item) {
-            $item->isPurchased = $item->purchases->isNotEmpty();
+            $item->isPurchased = $item->purchases->isNotEmpty(); // 購入済みアイテムかどうかを判断
+            $item->isInProgress = $item->purchases->where('in_progress', 1)->isNotEmpty(); // 取引中アイテムかどうかを判断
         }
 
         // 現在のページを設定
@@ -223,8 +224,18 @@ class ItemController extends Controller
         return view('mypage.index', compact('items', 'currentPage', 'isAuthenticated', 'userId', 'userName', 'profileImage', 'search'));
     }
 
+    // 取引チャット画面の表示
+    public function showTransactionChat($item_id)
+    {
+        // 認証済みユーザーかどうかを確認
+        $isAuthenticated = Auth::check();
+        $userId = $isAuthenticated ? Auth::id() : null;
 
+        // 商品情報を取得
+        $item = Item::findOrFail($item_id);
 
+        return view('mypage.transaction_chat', compact('item', 'isAuthenticated', 'userId'));
+    }
 
     // 商品詳細を表示
     public function showDetail($item_id)
