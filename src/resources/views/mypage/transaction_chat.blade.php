@@ -34,8 +34,33 @@
     </header>
 
     <main>
-        <div class="message-container">
-            <div class="message">商品の購入が完了しました</h2>
+        <div class="chat-sidebar">
+            <h2 class="sidebar-title">その他の取引</h2>
+        </div>
+        <div class="chat-main">
+            <!-- 上部: 取引のヘッダー部分 -->
+            <div class="chat-header">
+                <h2>〇〇さんとの取引画面</h2>
+                <button class="complete-transaction">取引を完了する</button>
+            </div>
+
+            <!-- 中部: 商品情報エリア -->
+            <div class="chat-info">
+                <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}" class="item-image">
+                <div class="product-details">
+                    <p class="product-name">{{ $item->name }}</p>
+                    <p class="product-price">
+                        <span class="yen-symbol">￥</span>
+                        {{ number_format($item->price) }}
+                        <span class="yen-symbol">(税込)</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 下部: チャットエリア -->
+            <div class="chat-body">
+                <!-- チャットメッセージが入る予定 -->
+            </div>
         </div>
 
     </main>

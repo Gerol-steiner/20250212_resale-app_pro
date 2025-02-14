@@ -1,5 +1,9 @@
 body {
     font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 画面全体の高さを確保 */
+    margin: 0;
 }
 
 .header {
@@ -60,15 +64,78 @@ body {
     color: #ffffff;
 }
 
-.message-container {
-    margin-top: 200px;
-    padding: 50px;
-    background-color: rgb(255, 241, 196);
+main {
+    display: flex; /* 横並び */
+    flex-grow: 1; /* ヘッダー以外の部分をすべて埋める */
 }
 
-.message {
-    font-size: 36px;
-    text-align: center;
+/* サイドバー */
+.chat-sidebar {
+    width: 260px;
+    display: flex;
+    flex-direction: column; /* 縦方向に配置 */
+    align-items: center; /* 水平方向に中央配置 */
+    text-align: center; /* テキストを中央揃え */
+    background-color: #868686;
+}
+
+/* サイドバータイトル */
+.sidebar-title {
+    color: #fff;
+}
+
+/* メイン画面（画面 右側） */
+.chat-main {
+    flex-grow: 1; /* 残りのスペースをすべて占める */
+    background-color: #fff; /* メイン部分の背景色 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 画面右側： 上部ヘッダー */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #5f5f5f;
+}
+
+/* 画面右側： 中部 */
+.chat-info {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #5f5f5f;
+}
+
+/* 画面右側： 中部_商品画像 */
+.item-image {
+    width: 200px;
+    margin-left: 10px;
+}
+
+/* 画面右側： 中部_商品詳細 */
+.product-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 40px;
+}
+
+/* 画面右側： 中部_商品名 */
+.product-name {
+    font-size: 55px;
+    margin: 14px 0;
+}
+
+/* 画面右側： 中部_商品価格 */
+.product-price {
+    font-size: 40px;
+    margin: 14px 0;
+}
+
+/* 画面右側： 中部_円記号と税込表記 */
+.yen-symbol {
+    font-size: 30px;
 }
 
 /* ■ タブレット（768-850px）向けのスタイル */
