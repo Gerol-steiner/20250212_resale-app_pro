@@ -170,6 +170,48 @@ class ItemController extends Controller
             }
         }
 
+        // 「取引中の商品」が選択された場合
+        else if ($tab === 'in_progress') {
+            if ($isAuthenticated) {
+                $items = Item::with('purchases')
+                    ->where(function ($query) use ($userId) {
+
+                        // 【購入した取引中の商品】
+                        // - purchasesテーブルから、現在のユーザーが購入者である商品を取得
+                        // - in_progress = 1（取引中）の商品のみを対象
+                        $query->whereIn('id', function ($subQuery) use ($userId) {
+                            $subQuery->select('item_id')
+                                ->from('purchases')
+                                ->where('user_id', $userId)
+                                ->where('in_progress', 1);
+                        })
+
+                        // 【出品した取引中の商品】
+                        // - 自分が出品した商品（itemsテーブルのuser_id = 現在のユーザーID）
+                        // - その商品がpurchasesテーブルに存在し、かつin_progress = 1（取引中）
+                        ->orWhereIn('id', function ($subQuery) use ($userId) {
+                            $subQuery->select('item_id')
+                                ->from('purchases')
+                                ->whereIn('item_id', function ($innerQuery) use ($userId) {
+                                    $innerQuery->select('id')
+                                        ->from('items')
+                                        ->where('user_id', $userId); // 自分が出品した商品
+                                })
+                                ->where('in_progress', 1);
+                        });
+                    });
+
+                // 検索キーワードが指定されている場合、商品名でフィルタリング
+                if ($search) {
+                    $items->where('name', 'like', '%' . $search . '%');
+                }
+
+                // クエリを実行し、結果を取得
+                $items = $items->get();
+            }
+        }
+
+
         // 各アイテムに購入済みフラグを追加
         foreach ($items as $item) {
             $item->isPurchased = $item->purchases->isNotEmpty();
