@@ -14,6 +14,7 @@ class Purchase extends Model
         'item_id',
         'payment_method',
         'address_id',
+        'in_progress'
     ];
 
     public function item()
