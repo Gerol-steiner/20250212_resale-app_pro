@@ -58,6 +58,10 @@
                     <li class="filter-option">
                         <a href="/mypage/?tab=buy&search={{ $search }}" class="filter-link {{ $currentPage === 'buy' ? 'active' : '' }}">購入した商品</a>
                     </li>
+                    <!-- TODO：要対応 -->
+                    <li class="filter-option">
+                        <a href="/mypage/?tab=buy&search={{ $search }}" class="filter-link {{ $currentPage === 'buy' ? 'active' : '' }}">取引中の商品</a>
+                    </li>
                 </ul>
 
             </nav>

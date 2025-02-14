@@ -192,7 +192,7 @@ checkoutButton.addEventListener('click', function() {
             building: building
         })
     })
-    .then(response => response.json())
+    .then(response => response.json()) // レスポンスのボディを JSON 形式に変換
     .then(data => {
         if (data.success) {  // PurchaseControllerの「validatePurchaseメソッド」からのreturn
 

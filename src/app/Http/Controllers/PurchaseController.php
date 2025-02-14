@@ -80,7 +80,7 @@ class PurchaseController extends Controller
         return view('items.purchase', compact('item', 'isAuthenticated', 'userId', 'address'));
     }
 
-    // pusrchasesテーブルへの登録と<script>へのJsonレスポンス
+    // purchasesテーブルへの登録と<script>へのJsonレスポンス
     public function thanks(PurchaseRequest $request)
     {
 
@@ -103,6 +103,7 @@ class PurchaseController extends Controller
             'item_id' => $itemId, // 現在の商品（item）のID
             'payment_method' => $paymentMethod, // 支払い方法
             'address_id' => $addressId, // フォームリクエストから取得したaddress_idを設定
+            'in_progress' => 1, // 商品ステータスを「取引中」に変更
         ]);
 
         // JSONレスポンスを返す（Jsonレスポンスを返さないとエラー。サンクス画面への遷移はフロントで行う）
@@ -118,7 +119,8 @@ class PurchaseController extends Controller
         $item = Item::findOrFail($itemId);
         $addressId = $request->input('address_id'); // 入力または選択された住所ID
 
-        $session = Session::create([
+        // Stripe にセッションを作成するリクエストを送信
+        $session = Session::create([ // Stripe の Checkout セッションを作成するための API リクエスト
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
@@ -137,6 +139,8 @@ class PurchaseController extends Controller
             ]),
             'cancel_url' => route('item.index'),
         ]);
+
+        // Stripe からのレスポンスを受け取った後、$session 変数に格納される
         return $session; // セッションオブジェクトを返す
     }
 
@@ -146,7 +150,7 @@ class PurchaseController extends Controller
         $paymentMethod = $request->input('payment_method');
 
         if ($paymentMethod === 'カード支払い') {
-            // カード支払いの場合は、Stripeのチェックアウトセッションを作成する
+            // カード支払いを選択した場合、Stripe APIに対してのチェックアウトセッションを作成
             $session = $this->createCheckoutSession($request);
             // fetch関数によるクライアントサイドのJavaScriptコードに対してJSON形式でレスポンスを返す
             return response()->json([
@@ -190,6 +194,7 @@ class PurchaseController extends Controller
             'item_id' => $itemId,
             'payment_method' => $paymentMethod,
             'address_id' => $addressId,
+            'in_progress' => 1, // 商品ステータスを「取引中」に変更
         ]);
 
         return view('purchase.thanks', compact('userId', 'isAuthenticated'));
