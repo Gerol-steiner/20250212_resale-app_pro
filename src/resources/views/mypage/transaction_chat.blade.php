@@ -41,6 +41,7 @@
             <!-- 上部: 取引のヘッダー部分 -->
             <div class="chat-header">
                 <h2>〇〇さんとの取引画面</h2>
+                <p>開発用 : {{ $userRole }}</p>
                 <button class="complete-transaction">取引を完了する</button>
             </div>
 
