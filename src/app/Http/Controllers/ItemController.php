@@ -224,33 +224,6 @@ class ItemController extends Controller
         return view('mypage.index', compact('items', 'currentPage', 'isAuthenticated', 'userId', 'userName', 'profileImage', 'search'));
     }
 
-    // 取引チャット画面の表示
-    public function showTransactionChat($item_id)
-    {
-        // 認証済みユーザーかどうかを確認
-        $isAuthenticated = Auth::check();
-        $userId = $isAuthenticated ? Auth::id() : null;
-
-        // 商品情報を取得
-        $item = Item::findOrFail($item_id);
-
-        // 取引情報を取得（この商品の購入履歴）
-        $purchase = Purchase::where('item_id', $item_id)->where('in_progress', 1)->first();
-
-        // ユーザーの役割を判定
-        $userRole = '未定'; // 初期値
-
-        if ($purchase) {
-            if ($purchase->user_id == $userId) {
-                $userRole = '購入者';
-            } elseif ($item->user_id == $userId) {
-                $userRole = '出品者';
-            }
-        }
-
-        return view('mypage.transaction_chat', compact('item', 'isAuthenticated', 'userId', 'userRole'));
-    }
-
     // 商品詳細を表示
     public function showDetail($item_id)
     {

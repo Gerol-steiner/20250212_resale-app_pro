@@ -78,7 +78,7 @@
                 @else
                     <a class="header__link" href="/login">ログイン</a>
                 @endif
-                <a class="header__link" href="/mypage/profile">マイページ</a>
+                <a class="header__link" href="/mypage">マイページ</a>
                 <a class="header__button" href="/sell" role="button">出品</a>
             </nav>
         </div>

@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PaymentController; // Stripe決済用
 use Illuminate\Foundation\Auth\EmailVerificationRequest; // メール認証用
 use App\Http\Controllers\Auth\VerificationController; // メール認証用
@@ -50,7 +51,7 @@ Route::post('/like/{item_id}', [ItemController::class, 'toggleLike'])->middlewar
 Route::get('/mypage', [ItemController::class, 'mypage'])->name('mypage.index');
 
 // 取引チャット画面の表示
-Route::get('/transaction-chat/{item_id}', [ItemController::class, 'showTransactionChat'])->name('transaction.chat')->middleware('auth');
+Route::get('/transaction-chat/{item_id}', [ChatController::class, 'showTransactionChat'])->name('transaction.chat')->middleware('auth');
 
 
 // 商品詳細ページ

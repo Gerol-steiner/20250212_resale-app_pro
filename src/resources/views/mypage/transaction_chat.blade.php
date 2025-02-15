@@ -40,7 +40,17 @@
         <div class="chat-main">
             <!-- 上部: 取引のヘッダー部分 -->
             <div class="chat-header">
-                <h2>〇〇さんとの取引画面</h2>
+                <div class="partner-profile">
+                    <img
+                        src="{{
+                            $partnerProfileImage
+                                ? asset($partnerProfileImage)
+                                : asset('images/user_icon_default.png')
+                        }}"
+                        alt="プロフィール写真"
+                        class="partner-profile-image">
+                    <h2>「{{ $partnerName }}」 さんとの取引画面</h2>
+                </div>
                 <p>開発用 : {{ $userRole }}</p>
                 <button class="complete-transaction">取引を完了する</button>
             </div>
@@ -60,7 +70,17 @@
 
             <!-- 下部: チャットエリア -->
             <div class="chat-body">
-                <!-- チャットメッセージが入る予定 -->
+                <!-- メッセージ履歴 -->
+                <div class="chat-messages">
+                    <!-- ここにチャットメッセージが表示される -->
+                </div>
+
+                <!-- メッセージ入力エリア -->
+                <div class="chat-input">
+                    <input type="text" class="message-input" placeholder="取引メッセージを入力してください">
+                    <button class="add-image">画像を追加</button>
+                    <button class="send-message">送信</button>
+                </div>
             </div>
         </div>
 
