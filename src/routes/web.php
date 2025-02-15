@@ -53,6 +53,8 @@ Route::get('/mypage', [ItemController::class, 'mypage'])->name('mypage.index');
 // 取引チャット画面の表示
 Route::get('/transaction-chat/{item_id}', [ChatController::class, 'showTransactionChat'])->name('transaction.chat')->middleware('auth');
 
+// チャットの送信・登録
+Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 
 // 商品詳細ページ
 // コメント登録

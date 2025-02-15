@@ -21,15 +21,18 @@ class ChatController extends Controller
         // 商品情報を取得
         $item = Item::with(['purchases', 'user'])->findOrFail($item_id);
 
-        // 取引情報を取得（この商品の購入履歴）
+        // 対応するpurchaseレコードを取得
         $purchase = Purchase::where('item_id', $item_id)->where('in_progress', 1)->first();
 
-        // ユーザーの役割を判定
         $userRole = '未定'; // 初期値
-        // 取引相手
-        $partnerName = '不明なユーザー';// 初期値
+        $partnerName = '不明なユーザー'; // 初期値
+        $purchaseId = null; // 初期値
+        $partnerProfileImage = null; // 取引相手のプロフィール画像
+        $chatMessages = collect(); // チャット履歴（デフォルト空）
+
 
         if ($purchase) {
+            $purchaseId = $purchase->id; // purchase_id を取得
             if ($purchase->user_id == $userId) {
                 $userRole = '購入者';
                 $partner = $item->user; // 出品者
@@ -43,9 +46,15 @@ class ChatController extends Controller
                 $partnerName = $partner->profile_name;
                 $partnerProfileImage = $partner->profile_image;
             }
+
+            // 過去のチャット履歴を取得（作成日時の昇順）
+            $chatMessages = Chat::where('purchase_id', $purchaseId)
+                ->where('is_deleted', 0) // 削除されていないメッセージのみ取得
+                ->orderBy('created_at', 'asc') // 古い順に表示
+                ->get();
         }
 
-        // **ログインユーザーのプロフィール画像を取得**
+        // ログインユーザーのプロフィール画像を取得
         $profileImage = null;
         if ($isAuthenticated) {
             $user = Auth::user(); // 現在のログインユーザーを取得
@@ -53,7 +62,30 @@ class ChatController extends Controller
         }
 
         return view('mypage.transaction_chat', compact(
-            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage'
+            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages'
         ));
+    }
+
+    // チャットの送信・登録
+    public function sendMessage(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string|max:400',
+            'purchase_id' => 'required|exists:purchases,id',
+        ]);
+
+        $chat = Chat::create([
+            'purchase_id' => $request->purchase_id,
+            'user_id' => Auth::id(),
+            'message' => $request->message,
+            'is_read' => 0, // 初期値：未読
+            'is_deleted' => 0,
+            'is_edited' => 0,
+        ]);
+
+        return response()->json([
+            'message' => $chat->message,
+            'time' => $chat->created_at->format('H:i'),
+        ]);
     }
 }

@@ -71,8 +71,14 @@
             <!-- 下部: チャットエリア -->
             <div class="chat-body">
                 <!-- メッセージ履歴 -->
-                <div class="chat-messages">
-                    <!-- ここにチャットメッセージが表示される -->
+                <!-- カスタムデータ属性に$purchaseIdを持たせる -->
+                <div class="chat-messages" data-purchase-id="{{ $purchaseId }}">
+                    @foreach ($chatMessages as $chat)
+                        <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
+                            <p class="message-text">{{ $chat->message }}</p>
+                            <span class="message-time">{{ $chat->created_at->format('H:i') }}</span>
+                        </div>
+                    @endforeach
                 </div>
 
                 <!-- メッセージ入力エリア -->
@@ -86,7 +92,9 @@
 
     </main>
 
-
+<!-- jQueryの読み込み -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ asset('js/chat.js') }}"></script>
 </body>
 
 </html>
