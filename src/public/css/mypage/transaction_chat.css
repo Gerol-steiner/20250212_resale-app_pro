@@ -187,14 +187,16 @@ main {
     background-color: #ebebeb;
 }
 
+.chat-message-container {
+    border: 1px solid red;
+}
+
 /* チャットメッセージのスタイル */
 .chat-message {
     display: flex;
     flex-direction: column;
-    margin: 10px;
-    padding: 8px;
     border-radius: 10px;
-    width: 55%;
+    width: 100%;
 }
 
 /* 自分のメッセージ */
@@ -203,7 +205,8 @@ main {
     text-align: right;
     padding: 8px;
     border-radius: 10px;
-    margin: 5px 10px 5px auto;
+    width: 55%;
+    margin: 5px 10px 5px auto; /* 右寄せ */
 }
 
 /* 相手のメッセージ */
@@ -213,7 +216,42 @@ main {
     text-align: left;
     padding: 8px;
     border-radius: 10px;
-    margin: 5px auto 5px 10px;
+    width: 55%;
+    margin: 5px auto 5px 10px; /* 左寄せ */
+}
+
+/* 自分のメッセージ下部の「時刻」、「編集」、「削除」 */
+.my-message-controls {
+    display: flex;
+    justify-content: space-between; /* 両端に配置 */
+    align-items: center;
+    padding: 0 10px;
+    width: 55%;
+    font-size: 12px;
+    margin: 5px 10px 5px auto; /* 右寄せ */
+    border: solid 1px blue;
+}
+
+/* 相手のメッセージ下部の「時刻」 */
+.partner-message-controls {
+    width: 55%;
+    font-size: 12px;
+    margin: 5px auto 5px 10px; /* 左寄せ */
+}
+
+/* 「編集」「削除」ボタンのコンテナ */
+.edit-delete-buttons {
+    padding-left: 12px;
+}
+
+/* 「編集」「削除」ボタン */
+.edit-message,
+.delete-message {
+    border: none;
+    background: none;
+    color: rgb(85, 85, 85);
+    font-size: 12px;
+    cursor: pointer;
 }
 
 /* 下部: メッセージ入力エリア */

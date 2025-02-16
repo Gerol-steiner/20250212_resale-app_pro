@@ -12,7 +12,7 @@ $(document).ready(function () {
     }
 
     // メッセージ取得ポーリング
-    setInterval(fetchNewMessages, 10000);
+    setInterval(fetchNewMessages, 3000);
 
     // 新しいメッセージを取得する関数
     function fetchNewMessages() {
@@ -24,7 +24,6 @@ $(document).ready(function () {
                 last_time: lastMessageTime, // 最後に取得したメッセージの時間
             },
             success: function (response) {
-                console.log("サーバーからのレスポンス:", response.latest_time);
                 // レスポンスに新しいメッセージが含まれている場合のみ処理
                 if (response.messages.length > 0) {
                     response.messages.forEach((message) => {
@@ -33,14 +32,33 @@ $(document).ready(function () {
                                 ? "my-message"
                                 : "partner-message";
 
+                        let controlsClass =
+                            message.user_id == userId
+                                ? "my-message-controls"
+                                : "partner-message-controls";
+
+                        // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
+                        let editDeleteButtons =
+                            message.user_id == userId
+                                ? `<div class="edit-delete-buttons">
+                                        <button class="edit-message" data-message-id="${message.id}">編集</button>
+                                        <button class="delete-message" data-message-id="${message.id}">削除</button>
+                                    </div>`
+                                : "";
+
                         // 既にあるメッセージと被らないように `created_at` でフィルタリング
                         if (message.time !== lastMessageTime) {
                             $(".chat-messages").append(`
-                                <div class="chat-message ${messageClass}">
-                                    <p class="message-text">${message.message}</p>
-                                    <span class="message-time">${message.time}</span>
-                                </div>
-                            `);
+                                    <div class="chat-message-container">
+                                        <div class="chat-message ${messageClass}">
+                                            <p class="message-text">${message.message}</p>
+                                        </div>
+                                        <div class="message-controls ${controlsClass}">
+                                            <span class="message-time">${message.time}</span>
+                                            ${editDeleteButtons}
+                                        </div>
+                                    </div>
+                                `);
                         }
                     });
 
@@ -74,10 +92,29 @@ $(document).ready(function () {
                         ? "my-message"
                         : "partner-message";
 
+                let controlsClass =
+                    response.user_id == userId
+                        ? "my-message-controls"
+                        : "partner-message-controls";
+
+                // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
+                let editDeleteButtons =
+                    response.user_id == userId
+                        ? `<div class="edit-delete-buttons">
+                                <button class="edit-message" data-message-id="${response.id}">編集</button>
+                                <button class="delete-message" data-message-id="${response.id}">削除</button>
+                            </div>`
+                        : "";
+
                 $(".chat-messages").append(`
-                    <div class="chat-message ${messageClass}">
-                        <p class="message-text">${response.message}</p>
-                        <span class="message-time">${response.time}</span>
+                    <div class="chat-message-container">
+                        <div class="chat-message ${messageClass}">
+                            <p class="message-text">${response.message}</p>
+                        </div>
+                        <div class="message-controls ${controlsClass}">
+                            <span class="message-time">${response.time}</span>
+                            ${editDeleteButtons}
+                        </div>
                     </div>
                 `);
 

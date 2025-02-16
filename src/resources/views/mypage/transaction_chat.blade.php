@@ -74,10 +74,24 @@
                 <!-- カスタムデータ属性に$purchaseIdを持たせ、chat.jsに渡す -->
                 <div class="chat-messages" data-purchase-id="{{ $purchaseId }}" data-user-id="{{ $userId }}">
                     @foreach ($chatMessages as $chat)
-                        <!-- 自分のメッセージか相手のメッセージかによってclass名を割り当てる -->
-                        <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
-                            <p class="message-text">{{ $chat->message }}</p>
-                            <span class="message-time">{{ $chat->created_at->format('H:i') }}</span>
+                        <div class="chat-message-container">
+                            <!-- メッセージ本体 -->
+                            <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
+                                <p class="message-text">{{ $chat->message }}</p>
+                            </div>
+
+                            <!-- メッセージの制御ボタン -->
+                            <div class="message-controls {{ $chat->user_id == $userId ? 'my-message-controls' : 'partner-message-controls' }}">
+                                <span class="message-time">{{ $chat->created_at->format('H:i') }}</span>
+
+                                <!-- 自分のメッセージの場合のみ「編集」「削除」ボタンを表示 -->
+                                @if ($chat->user_id == $userId)
+                                    <div class="edit-delete-buttons">
+                                        <button class="edit-message" data-message-id="{{ $chat->id }}">編集</button>
+                                        <button class="delete-message" data-message-id="{{ $chat->id }}">削除</button>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     @endforeach
                 </div>
