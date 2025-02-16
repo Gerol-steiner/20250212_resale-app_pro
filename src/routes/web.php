@@ -56,6 +56,10 @@ Route::get('/transaction-chat/{item_id}', [ChatController::class, 'showTransacti
 // チャットの送信・登録
 Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 
+// ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する
+Route::get('/chat/get-messages', [ChatController::class, 'getMessages'])->name('chat.getMessages');
+
+
 // 商品詳細ページ
 // コメント登録
 Route::post('/item/{item_id}/comments', [CommentController::class, 'addComment'])->middleware('auth')->name('comments.add');

@@ -8,6 +8,8 @@ use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\Chat;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class ChatController extends Controller
 {
@@ -87,6 +89,47 @@ class ChatController extends Controller
             'message' => $chat->message,
             'time' => $chat->created_at->format('H:i'),
             'user_id' => $chat->user_id, // 送信者を判定するためのuser_idを渡す
+        ]);
+    }
+
+    /**
+     * ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する関数
+     *
+     * @param Request $request クライアントからのリクエスト（purchase_id, last_time）
+     * @return \Illuminate\Http\JsonResponse 新しいメッセージのリストと最新のメッセージ時刻
+     */
+    public function getMessages(Request $request)
+    {
+        $request->validate([
+            'purchase_id' => 'required|exists:purchases,id',
+            'last_time' => 'nullable|string', // ISO 8601 または Laravel 形式の文字列
+        ]);
+
+        // last_time を Laravel のタイムゾーンに合わせて変換
+        $lastTime = $request->last_time
+        ? Carbon::parse($request->last_time)->setTimezone(config('app.timezone'))->toDateTimeString()
+        : null;
+
+        $query = Chat::where('purchase_id', $request->purchase_id)
+            ->where('is_deleted', 0) // 削除されていないメッセージのみ
+            ->where('created_at', '>', $lastTime) // last_time より新しいメッセージのみ取得
+            ->orderBy('created_at', 'asc');
+
+        $messages = $query->get();
+
+        return response()->json([
+            // messagesキー
+            'messages' => $messages->map(function ($message) {
+                return [
+                    'message' => $message->message,
+                    'user_id' => $message->user_id,
+                    'time' => $message->created_at->format('H:i'),
+                ];
+            }),
+            // latest_timeキー
+            'latest_time' => $messages->isNotEmpty()
+                ? $messages->last()->created_at->toISOString()
+                : $request->last_time,
         ]);
     }
 }

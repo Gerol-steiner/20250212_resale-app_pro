@@ -95,6 +95,10 @@
 
 <!-- jQueryの読み込み -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- ページのロード時に基準となる時間「lastMessageTime」に現在時刻をセットする -->
+<script>
+    let lastMessageTime = "{{ now()->format('Y-m-d H:i:s') }}";
+</script>
 <script src="{{ asset('js/chat.js') }}"></script>
 </body>
 
