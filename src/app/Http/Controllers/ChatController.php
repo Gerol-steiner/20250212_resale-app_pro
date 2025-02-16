@@ -86,6 +86,7 @@ class ChatController extends Controller
         return response()->json([
             'message' => $chat->message,
             'time' => $chat->created_at->format('H:i'),
+            'user_id' => $chat->user_id, // 送信者を判定するためのuser_idを渡す
         ]);
     }
 }

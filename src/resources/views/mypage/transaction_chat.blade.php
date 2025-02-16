@@ -51,7 +51,7 @@
                         class="partner-profile-image">
                     <h2>「{{ $partnerName }}」 さんとの取引画面</h2>
                 </div>
-                <p>開発用 : {{ $userRole }}</p>
+                <p>開発用 : {{ $userRole }}  userId{{ $userId }}</p>
                 <button class="complete-transaction">取引を完了する</button>
             </div>
 
@@ -71,9 +71,10 @@
             <!-- 下部: チャットエリア -->
             <div class="chat-body">
                 <!-- メッセージ履歴 -->
-                <!-- カスタムデータ属性に$purchaseIdを持たせる -->
-                <div class="chat-messages" data-purchase-id="{{ $purchaseId }}">
+                <!-- カスタムデータ属性に$purchaseIdを持たせ、chat.jsに渡す -->
+                <div class="chat-messages" data-purchase-id="{{ $purchaseId }}" data-user-id="{{ $userId }}">
                     @foreach ($chatMessages as $chat)
+                        <!-- 自分のメッセージか相手のメッセージかによってclass名を割り当てる -->
                         <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
                             <p class="message-text">{{ $chat->message }}</p>
                             <span class="message-time">{{ $chat->created_at->format('H:i') }}</span>
