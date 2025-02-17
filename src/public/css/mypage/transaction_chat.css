@@ -197,17 +197,23 @@ main {
     align-items: center;
     gap: 10px;
     margin-bottom: 5px;
+    padding: 0 20px;
     border: solid 1px cyan;
 }
 
-/* プロフィール画像 */
+/* 自分のメッセージ: 右寄せ（名前→画像） */
+.my-user-info {
+    justify-content: flex-end;
+}
+
+/* ユーザー情報【プロフィール画像】 */
 .user-profile-image {
     width: 35px;
     height: 35px;
     border-radius: 50%;
 }
 
-/* ユーザー名 */
+/* ユーザー情報【ユーザー名】 */
 .user-name {
     font-size: 14px;
     color: #333;

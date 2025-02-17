@@ -31,11 +31,23 @@ $(document).ready(function () {
                             message.user_id == userId
                                 ? "my-message"
                                 : "partner-message";
-
                         let controlsClass =
                             message.user_id == userId
                                 ? "my-message-controls"
                                 : "partner-message-controls";
+                        let userInfoClass =
+                            message.user_id == userId
+                                ? "my-user-info"
+                                : "partner-user-info";
+
+                        let userName =
+                            message.user_id == userId
+                                ? profileName
+                                : partnerName;
+                        let userImage =
+                            message.user_id == userId
+                                ? profileImage
+                                : partnerProfileImage;
 
                         // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
                         let editDeleteButtons =
@@ -49,16 +61,27 @@ $(document).ready(function () {
                         // 既にあるメッセージと被らないように `created_at` でフィルタリング
                         if (message.time !== lastMessageTime) {
                             $(".chat-messages").append(`
-                                    <div class="chat-message-container">
-                                        <div class="chat-message ${messageClass}">
-                                            <p class="message-text">${message.message}</p>
-                                        </div>
-                                        <div class="message-controls ${controlsClass}">
-                                            <span class="message-time">${message.time}</span>
-                                            ${editDeleteButtons}
-                                        </div>
+                                <div class="chat-message-container">
+                                    <div class="user-info ${userInfoClass}">
+                                        ${
+                                            message.user_id == userId
+                                                ? `<span class="user-name">${userName}</span><img src="${userImage}" alt="プロフィール写真" class="user-profile-image">`
+                                                : `<img src="${userImage}" alt="プロフィール写真" class="user-profile-image"><span class="user-name">${userName}</span>`
+                                        }
                                     </div>
-                                `);
+                                    <div class="chat-message ${messageClass}">
+                                        <p class="message-text">${
+                                            message.message
+                                        }</p>
+                                    </div>
+                                    <div class="message-controls ${controlsClass}">
+                                        <span class="message-time">${
+                                            message.time
+                                        }</span>
+                                        ${editDeleteButtons}
+                                    </div>
+                                </div>
+                            `);
                         }
                     });
 
@@ -91,11 +114,21 @@ $(document).ready(function () {
                     response.user_id == userId
                         ? "my-message"
                         : "partner-message";
-
                 let controlsClass =
                     response.user_id == userId
                         ? "my-message-controls"
                         : "partner-message-controls";
+                let userInfoClass =
+                    response.user_id == userId
+                        ? "my-user-info"
+                        : "partner-user-info";
+
+                let userName =
+                    response.user_id == userId ? profileName : partnerName;
+                let userImage =
+                    response.user_id == userId
+                        ? profileImage
+                        : partnerProfileImage;
 
                 // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
                 let editDeleteButtons =
@@ -108,6 +141,13 @@ $(document).ready(function () {
 
                 $(".chat-messages").append(`
                     <div class="chat-message-container">
+                        <div class="user-info ${userInfoClass}">
+                            ${
+                                response.user_id == userId
+                                    ? `<span class="user-name">${userName}</span><img src="${userImage}" alt="プロフィール写真" class="user-profile-image">`
+                                    : `<img src="${userImage}" alt="プロフィール写真" class="user-profile-image"><span class="user-name">${userName}</span>`
+                            }
+                        </div>
                         <div class="chat-message ${messageClass}">
                             <p class="message-text">${response.message}</p>
                         </div>

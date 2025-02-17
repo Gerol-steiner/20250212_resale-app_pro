@@ -76,13 +76,16 @@
                     @foreach ($chatMessages as $chat)
                     <div class="chat-message-container">
                             <!-- ユーザー情報（プロフィール画像＋ユーザー名） -->
-                            <div class="user-info">
-                                <img src="{{ $chat->user_id == $userId ? asset($profileImage) : asset($partnerProfileImage) }}"
-                                    alt="プロフィール写真"
-                                    class="user-profile-image">
-                                <span class="user-name">
-                                    {{ $chat->user_id == $userId ? $profileName : $partnerName }}
-                                </span>
+                            <div class="user-info {{ $chat->user_id == $userId ? 'my-user-info' : 'partner-user-info' }}">
+                                @if ($chat->user_id == $userId)
+                                    <!-- 自分のメッセージ: 名前→画像の順番 -->
+                                    <span class="user-name">{{ $profileName }}</span>
+                                    <img src="{{ asset($profileImage) }}" alt="プロフィール写真" class="user-profile-image">
+                                @else
+                                    <!-- 相手のメッセージ: 画像→名前の順番 -->
+                                    <img src="{{ asset($partnerProfileImage) }}" alt="プロフィール写真" class="user-profile-image">
+                                    <span class="user-name">{{ $partnerName }}</span>
+                                @endif
                             </div>
 
                             <!-- メッセージ本体 -->
@@ -119,9 +122,14 @@
 
 <!-- jQueryの読み込み -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- ページのロード時に基準となる時間「lastMessageTime」に現在時刻をセットする -->
+<!-- 以下 chat.js に渡す変数の定義 -->
 <script>
+    // ページのロード時に基準となる時間「lastMessageTime」に現在時刻をセット
     let lastMessageTime = "{{ now()->format('Y-m-d H:i:s') }}";
+    let profileName = "{{ $profileName }}";
+    let profileImage = "{{ asset($profileImage) }}";
+    let partnerName = "{{ $partnerName }}";
+    let partnerProfileImage = "{{ asset($partnerProfileImage) }}";
 </script>
 <script src="{{ asset('js/chat.js') }}"></script>
 </body>
