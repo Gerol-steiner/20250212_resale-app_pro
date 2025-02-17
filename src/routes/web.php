@@ -56,6 +56,9 @@ Route::get('/transaction-chat/{item_id}', [ChatController::class, 'showTransacti
 // チャットの送信・登録
 Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 
+// チャットの削除
+Route::post('/chat/delete', [ChatController::class, 'deleteMessage'])->middleware('auth');
+
 // ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する
 Route::get('/chat/get-messages', [ChatController::class, 'getMessages'])->name('chat.getMessages');
 

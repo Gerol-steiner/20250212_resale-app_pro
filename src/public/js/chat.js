@@ -168,4 +168,49 @@ $(document).ready(function () {
             },
         });
     });
+
+    // メッセージ削除
+    $(document).ready(function () {
+        console.log("初期 lastMessageTime:", lastMessageTime);
+
+        let purchaseId = $(".chat-messages").data("purchase-id");
+        let userId = $(".chat-messages").data("user-id");
+
+        if (!purchaseId || !userId) {
+            alert("取引情報が取得できませんでした。");
+            return;
+        }
+
+        // メッセージ削除処理
+        $(document).on("click", ".delete-message", function () {
+            let messageId = $(this).data("message-id");
+            let messageContainer = $(this).closest(".chat-message-container");
+
+            if (!confirm("このメッセージを削除しますか？")) {
+                return;
+            }
+
+            $.ajax({
+                url: "/chat/delete",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr("content"),
+                    message_id: messageId,
+                },
+                success: function (response) {
+                    console.log(response);
+                    messageContainer.fadeOut(300, function () {
+                        $(this).remove();
+                    });
+                },
+                error: function (xhr) {
+                    console.error(
+                        "メッセージの削除に失敗しました。",
+                        xhr.responseText
+                    );
+                    alert("削除に失敗しました。");
+                },
+            });
+        });
+    });
 });

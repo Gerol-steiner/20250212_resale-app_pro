@@ -134,4 +134,26 @@ class ChatController extends Controller
                 : $request->last_time,
         ]);
     }
+
+    // チャットの削除
+    public function deleteMessage(Request $request)
+    {
+        $request->validate([
+            'message_id' => 'required|exists:chats,id',
+        ]);
+
+        $chat = Chat::where('id', $request->message_id)
+            ->where('user_id', Auth::id()) // 自分のメッセージのみ削除可能
+            ->first();
+
+        if (!$chat) {
+            return response()->json(['error' => 'メッセージが見つかりません'], 404);
+        }
+
+        // is_deleted を 1 にする
+        $chat->is_deleted = 1;
+        $chat->save();
+
+        return response()->json(['success' => 'メッセージを削除しました']);
+    }
 }
