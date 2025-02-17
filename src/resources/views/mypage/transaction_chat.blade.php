@@ -59,7 +59,10 @@
                     <h2>「{{ $partnerName }}」 さんとの取引画面</h2>
                 </div>
                 <p>開発用 : {{ $userRole }}  userId{{ $userId }}</p>
-                <button class="complete-transaction">取引を完了する</button>
+                <!-- 取引を完了するボタン（購入者のみ表示） -->
+                @if ($userRole === '購入者')
+                    <button class="complete-transaction">取引を完了する</button>
+                @endif
             </div>
 
             <!-- 中部: 商品情報エリア -->
