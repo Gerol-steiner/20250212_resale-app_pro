@@ -56,15 +56,17 @@ class ChatController extends Controller
                 ->get();
         }
 
-        // ログインユーザーのプロフィール画像を取得
+        // ログインユーザーのプロフィール情報を取得
         $profileImage = null;
+        $profileName = null;
         if ($isAuthenticated) {
             $user = Auth::user(); // 現在のログインユーザーを取得
-            $profileImage = $user->profile_image; // プロフィール画像のパスを取得
+            $profileImage = $user->profile_image; // 自分のプロフィール画像のパスを取得
+            $profileName = $user->profile_name; // 自分のユーザー名
         }
 
         return view('mypage.transaction_chat', compact(
-            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages'
+            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages', 'profileName'
         ));
     }
 

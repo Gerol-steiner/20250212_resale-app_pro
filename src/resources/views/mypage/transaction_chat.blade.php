@@ -74,7 +74,17 @@
                 <!-- カスタムデータ属性に$purchaseIdを持たせ、chat.jsに渡す -->
                 <div class="chat-messages" data-purchase-id="{{ $purchaseId }}" data-user-id="{{ $userId }}">
                     @foreach ($chatMessages as $chat)
-                        <div class="chat-message-container">
+                    <div class="chat-message-container">
+                            <!-- ユーザー情報（プロフィール画像＋ユーザー名） -->
+                            <div class="user-info">
+                                <img src="{{ $chat->user_id == $userId ? asset($profileImage) : asset($partnerProfileImage) }}"
+                                    alt="プロフィール写真"
+                                    class="user-profile-image">
+                                <span class="user-name">
+                                    {{ $chat->user_id == $userId ? $profileName : $partnerName }}
+                                </span>
+                            </div>
+
                             <!-- メッセージ本体 -->
                             <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
                                 <p class="message-text">{{ $chat->message }}</p>

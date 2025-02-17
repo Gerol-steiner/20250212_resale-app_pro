@@ -191,6 +191,28 @@ main {
     border: 1px solid red;
 }
 
+/* ユーザー情報（プロフィール画像とユーザー名）のスタイル */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    border: solid 1px cyan;
+}
+
+/* プロフィール画像 */
+.user-profile-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+/* ユーザー名 */
+.user-name {
+    font-size: 14px;
+    color: #333;
+}
+
 /* チャットメッセージのスタイル */
 .chat-message {
     display: flex;
@@ -236,7 +258,12 @@ main {
 .partner-message-controls {
     width: 55%;
     font-size: 12px;
+
     margin: 5px auto 5px 10px; /* 左寄せ */
+}
+
+.message-time {
+    color: #403f3f;
 }
 
 /* 「編集」「削除」ボタンのコンテナ */
