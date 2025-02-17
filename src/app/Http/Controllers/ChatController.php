@@ -156,4 +156,32 @@ class ChatController extends Controller
 
         return response()->json(['success' => 'メッセージを削除しました']);
     }
+
+    // チャットの編集
+    public function editMessage(Request $request)
+    {
+        $request->validate([
+            'message_id' => 'required|exists:chats,id',
+            'message' => 'required|string|max:400',
+        ]);
+
+        $chat = Chat::where('id', $request->message_id)
+            ->where('user_id', Auth::id()) // 自分のメッセージのみ編集可能
+            ->first();
+
+        if (!$chat) {
+            return response()->json(['error' => 'メッセージが見つかりません'], 404);
+        }
+
+        // メッセージを更新
+        $chat->message = $request->message;
+        $chat->is_edited = 1;
+        $chat->save();
+
+        return response()->json([
+            'success' => 'メッセージを編集しました',
+            'message' => $chat->message,
+            'is_edited' => $chat->is_edited,
+        ]);
+    }
 }

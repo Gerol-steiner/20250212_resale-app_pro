@@ -59,6 +59,9 @@ Route::post('/chat/send', [ChatController::class, 'sendMessage']);
 // チャットの削除
 Route::post('/chat/delete', [ChatController::class, 'deleteMessage'])->middleware('auth');
 
+// チャットの編集
+Route::post('/chat/edit', [ChatController::class, 'editMessage'])->middleware('auth');
+
 // ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する
 Route::get('/chat/get-messages', [ChatController::class, 'getMessages'])->name('chat.getMessages');
 

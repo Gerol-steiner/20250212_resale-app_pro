@@ -213,4 +213,95 @@ $(document).ready(function () {
             });
         });
     });
+
+    // メッセージ編集処理
+    $(document).on("click", ".edit-message", function () {
+        let messageId = $(this).data("message-id");
+        let messageContainer = $(this).closest(".chat-message-container");
+        let messageElement = messageContainer.find(".chat-message.my-message");
+        let messageText = messageElement.find(".message-text");
+        let currentText = messageElement.find(".message-text").text().trim();
+
+        // すでに編集モードの場合は何もしない
+        if (messageContainer.find(".edit-message-form").length > 0) {
+            return;
+        }
+
+        // メッセージテキストを非表示
+        messageText.hide();
+
+        // 編集フォームのHTML
+        let editForm = `
+        <div class="edit-message-form">
+            <textarea class="edit-message-input">${currentText}</textarea>
+            <div class="edit-buttons">
+                <button class="save-message" data-message-id="${messageId}">登録</button>
+                <button class="cancel-edit">キャンセル</button>
+            </div>
+        </div>
+    `;
+
+        // メッセージ本体（.chat-message.my-message）の子要素として追加
+        messageElement.append(editForm);
+    });
+
+    // 編集のキャンセル
+    $(document).on("click", ".cancel-edit", function () {
+        let messageContainer = $(this).closest(".chat-message-container");
+        messageContainer.find(".edit-message-form").remove();
+        messageContainer.find(".message-text").show();
+    });
+
+    // メッセージの保存（サーバーへのリクエスト発生）
+    $(document).on("click", ".save-message", function () {
+        let messageContainer = $(this).closest(".chat-message-container");
+        let messageId = $(this).data("message-id");
+        let newMessage = messageContainer
+            .find(".edit-message-input")
+            .val()
+            .trim();
+        let messageTextElement = messageContainer.find(".message-text");
+        let chatMessageElement = messageContainer.find(
+            ".chat-message.my-message"
+        );
+
+        if (newMessage === "") {
+            alert("メッセージを入力してください。");
+            return;
+        }
+
+        $.ajax({
+            url: "/chat/edit",
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                message_id: messageId,
+                message: newMessage,
+            },
+            success: function (response) {
+                console.log(response);
+
+                // メッセージを更新
+                messageTextElement.text(response.message).show();
+                messageContainer.find(".edit-message-form").remove();
+
+                // 既に「(編集済み)」のラベルがない場合のみ追加（message-textの下に追加）
+                if (
+                    response.is_edited &&
+                    chatMessageElement.find(".edited-label").length === 0
+                ) {
+                    chatMessageElement.append(
+                        '<span class="edited-label">(編集済み)</span>'
+                    );
+                }
+            },
+            error: function (xhr) {
+                console.error(
+                    "メッセージの編集に失敗しました。",
+                    xhr.responseText
+                );
+                alert("編集に失敗しました。");
+            },
+        });
+    });
 });

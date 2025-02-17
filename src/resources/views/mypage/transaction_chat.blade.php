@@ -90,7 +90,12 @@
 
                             <!-- メッセージ本体 -->
                             <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
-                                <p class="message-text">{{ $chat->message }}</p>
+                                <p class="message-text">
+                                    {{ $chat->message }}
+                                </p>
+                                @if ($chat->is_edited)
+                                    <span class="edited-label">(編集済み)</span>
+                                @endif
                             </div>
 
                             <!-- メッセージの制御ボタン -->

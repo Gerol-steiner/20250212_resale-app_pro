@@ -239,8 +239,8 @@ main {
 
 /* 相手のメッセージ */
 .partner-message {
-    background-color: #8f8f8f;
-    color: #fff;
+    background-color: #a2a2a2;
+    color: #191919;
     text-align: left;
     padding: 8px;
     border-radius: 10px;
@@ -268,6 +268,7 @@ main {
     margin: 5px auto 5px 10px; /* 左寄せ */
 }
 
+/* 送信時間の表記 */
 .message-time {
     color: #403f3f;
 }
@@ -285,6 +286,77 @@ main {
     color: rgb(85, 85, 85);
     font-size: 12px;
     cursor: pointer;
+}
+
+/* 編集フォーム全体 */
+.edit-message-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 右寄せ */
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* テキストエリア */
+.edit-message-input {
+    width: 90%; /* 幅調整 */
+    min-height: 140px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical; /* 縦にリサイズ可能 */
+    background-color: #fff;
+}
+
+/* 編集ボタンのコンテナ */
+.edit-buttons {
+    display: flex;
+    justify-content: flex-end; /* 右寄せ */
+    gap: 8px; /* ボタン間の間隔 */
+    margin-top: 5px;
+}
+
+/* 「登録」ボタン */
+.save-message {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-message:hover {
+    background-color: #45a049;
+}
+
+/* 「キャンセル」ボタン */
+.cancel-edit {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-edit:hover {
+    background-color: #d32f2f;
+}
+
+/* メッセージ本体の非表示 */
+.chat-message .message-text.hidden {
+    display: none;
+}
+
+/* (編集済み)ラベル */
+.edited-label {
+    color: rgb(72, 72, 72);
+    font-size: 12px;
+    font-weight: 100;
 }
 
 /* 下部: メッセージ入力エリア */
