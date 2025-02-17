@@ -24,69 +24,58 @@ $(document).ready(function () {
                 last_time: lastMessageTime, // 最後に取得したメッセージの時間
             },
             success: function (response) {
-                // レスポンスに新しいメッセージが含まれている場合のみ処理
                 if (response.messages.length > 0) {
                     response.messages.forEach((message) => {
-                        let messageClass =
-                            message.user_id == userId
-                                ? "my-message"
-                                : "partner-message";
-                        let controlsClass =
-                            message.user_id == userId
-                                ? "my-message-controls"
-                                : "partner-message-controls";
-                        let userInfoClass =
-                            message.user_id == userId
-                                ? "my-user-info"
-                                : "partner-user-info";
-
-                        let userName =
-                            message.user_id == userId
-                                ? profileName
-                                : partnerName;
-                        let userImage =
-                            message.user_id == userId
-                                ? profileImage
-                                : partnerProfileImage;
-
-                        // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
-                        let editDeleteButtons =
-                            message.user_id == userId
-                                ? `<div class="edit-delete-buttons">
-                                        <button class="edit-message" data-message-id="${message.id}">編集</button>
-                                        <button class="delete-message" data-message-id="${message.id}">削除</button>
-                                    </div>`
-                                : "";
-
-                        // 既にあるメッセージと被らないように `created_at` でフィルタリング
-                        if (message.time !== lastMessageTime) {
-                            $(".chat-messages").append(`
-                                <div class="chat-message-container">
-                                    <div class="user-info ${userInfoClass}">
-                                        ${
-                                            message.user_id == userId
-                                                ? `<span class="user-name">${userName}</span><img src="${userImage}" alt="プロフィール写真" class="user-profile-image">`
-                                                : `<img src="${userImage}" alt="プロフィール写真" class="user-profile-image"><span class="user-name">${userName}</span>`
-                                        }
-                                    </div>
-                                    <div class="chat-message ${messageClass}">
-                                        <p class="message-text">${
-                                            message.message
-                                        }</p>
-                                    </div>
-                                    <div class="message-controls ${controlsClass}">
-                                        <span class="message-time">${
-                                            message.time
-                                        }</span>
-                                        ${editDeleteButtons}
-                                    </div>
-                                </div>
-                            `);
+                        // **✅ 自分のメッセージはスキップ（相手のメッセージのみ追加）**
+                        if (message.user_id == userId) {
+                            return; // 自分のメッセージなら処理しない
                         }
+
+                        // **✅ 既にあるメッセージは追加しない**
+                        if (
+                            $(
+                                `.chat-message-container[data-message-id="${message.message_id}"]`
+                            ).length > 0
+                        ) {
+                            return;
+                        }
+
+                        let messageClass = "partner-message";
+                        let controlsClass = "partner-message-controls";
+                        let userInfoClass = "partner-user-info";
+
+                        let newMessageHtml = `
+                        <div class="chat-message-container" data-message-id="${
+                            message.message_id
+                        }">
+                            <div class="user-info ${userInfoClass}">
+                                <img src="${partnerProfileImage}" alt="プロフィール写真" class="user-profile-image">
+                                <span class="user-name">${partnerName}</span>
+                            </div>
+                            <div class="chat-message ${messageClass}">
+                                ${
+                                    message.message
+                                        ? `<p class="message-text">${message.message}</p>`
+                                        : ""
+                                }
+                                ${
+                                    message.image_path
+                                        ? `<img src="${message.image_path}" class="chat-image">`
+                                        : ""
+                                }
+                            </div>
+                            <div class="message-controls ${controlsClass}">
+                                <span class="message-time">${
+                                    message.time
+                                }</span>
+                            </div>
+                        </div>
+                    `;
+
+                        $(".chat-messages").append(newMessageHtml);
                     });
 
-                    // 最後に取得したメッセージの時間を更新
-                    console.log("更新後の last_time:", lastMessageTime);
+                    // **✅ 最新のメッセージ時刻を更新**
                     lastMessageTime = response.latest_time;
                 }
             },
@@ -96,20 +85,48 @@ $(document).ready(function () {
         });
     }
 
-    // メッセージ送信
+    // --- 画像アップロード処理 ---
+    let selectedImage = null; // 選択した画像を保持
+
+    // 「画像を追加」ボタンをクリック時に file input を開く
+    $(".add-image").click(function () {
+        $("#image-upload").click();
+    });
+
+    // 画像選択時の処理
+    $("#image-upload").change(function (event) {
+        let file = event.target.files[0];
+        if (file) {
+            selectedImage = file; // 画像を保存
+            alert("画像が選択されました: " + file.name);
+        }
+    });
+
+    // メッセージ送信処理（画像 + テキスト）
+    // メッセージ送信処理（画像 + テキスト）
     $(".send-message").click(function () {
         let message = $(".message-input").val().trim();
-        if (message === "") return;
+        let userId = $(".chat-messages").data("user-id");
+        let formData = new FormData();
+        formData.append("_token", $('meta[name="csrf-token"]').attr("content"));
+        formData.append("purchase_id", $(".chat-messages").data("purchase-id"));
+        if (message) formData.append("message", message);
+        if (selectedImage) formData.append("image", selectedImage);
 
         $.ajax({
             url: "/chat/send",
             type: "POST",
-            data: {
-                _token: $('meta[name="csrf-token"]').attr("content"),
-                purchase_id: purchaseId,
-                message: message,
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
+                console.log("送信成功", response);
+
+                if (!response.message_id) {
+                    console.error("メッセージ ID が取得できません");
+                    return;
+                }
+
                 let messageClass =
                     response.user_id == userId
                         ? "my-message"
@@ -130,40 +147,67 @@ $(document).ready(function () {
                         ? profileImage
                         : partnerProfileImage;
 
-                // 自分のメッセージであれば「編集」「削除」ボタンを格納、相手のメッセージなら空文字を格納
                 let editDeleteButtons =
                     response.user_id == userId
-                        ? `<div class="edit-delete-buttons">
-                                <button class="edit-message" data-message-id="${response.id}">編集</button>
-                                <button class="delete-message" data-message-id="${response.id}">削除</button>
-                            </div>`
+                        ? `
+                <div class="edit-delete-buttons">
+                    <button class="edit-message" data-message-id="${response.message_id}">編集</button>
+                    <button class="delete-message" data-message-id="${response.message_id}">削除</button>
+                </div>`
                         : "";
 
-                $(".chat-messages").append(`
-                    <div class="chat-message-container">
-                        <div class="user-info ${userInfoClass}">
-                            ${
-                                response.user_id == userId
-                                    ? `<span class="user-name">${userName}</span><img src="${userImage}" alt="プロフィール写真" class="user-profile-image">`
-                                    : `<img src="${userImage}" alt="プロフィール写真" class="user-profile-image"><span class="user-name">${userName}</span>`
-                            }
-                        </div>
-                        <div class="chat-message ${messageClass}">
-                            <p class="message-text">${response.message}</p>
-                        </div>
-                        <div class="message-controls ${controlsClass}">
-                            <span class="message-time">${response.time}</span>
-                            ${editDeleteButtons}
-                        </div>
+                let newMessageHtml = `
+                <div class="chat-message-container" data-message-id="${
+                    response.message_id
+                }">
+                    <div class="user-info ${userInfoClass}">
+                        ${
+                            response.user_id == userId
+                                ? `<span class="user-name">${userName}</span><img src="${userImage}" alt="プロフィール写真" class="user-profile-image">`
+                                : `<img src="${userImage}" alt="プロフィール写真" class="user-profile-image"><span class="user-name">${userName}</span>`
+                        }
                     </div>
-                `);
+                    <div class="chat-message ${messageClass}">
+                        ${
+                            response.message
+                                ? `<p class="message-text">${response.message}</p>`
+                                : ""
+                        }
+                        ${
+                            response.image_path
+                                ? `<img src="${response.image_path}" class="chat-image" style="display: none;">`
+                                : ""
+                        }
+                    </div>
+                    <div class="message-controls ${controlsClass}">
+                        <span class="message-time">${response.time}</span>
+                        ${editDeleteButtons}
+                    </div>
+                </div>
+            `;
 
-                $(".message-input").val("");
+                let $newMessage = $(newMessageHtml);
+                $(".chat-messages").append($newMessage);
+                $(".message-input").val(""); // 入力欄をクリア
+                selectedImage = null;
+                $("#image-upload").val("");
 
-                // 最後に取得したメッセージの時間を更新
+                // **ここで lastMessageTime を更新し、ポーリングによる重複を防ぐ**
                 lastMessageTime = response.time;
+
+                if (response.image_path) {
+                    let img = new Image();
+                    img.src = response.image_path;
+                    img.onload = function () {
+                        $newMessage
+                            .find(".chat-image")
+                            .attr("src", response.image_path)
+                            .fadeIn();
+                    };
+                }
             },
-            error: function () {
+            error: function (error) {
+                console.error("送信エラー", error);
                 alert("メッセージの送信に失敗しました。");
             },
         });

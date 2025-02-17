@@ -100,9 +100,14 @@
 
                             <!-- メッセージ本体 -->
                             <div class="chat-message {{ $chat->user_id == $userId ? 'my-message' : 'partner-message' }}">
-                                <p class="message-text">
-                                    {{ $chat->message }}
-                                </p>
+                                @if ($chat->message)
+                                    <p class="message-text">{{ $chat->message }}</p>
+                                @endif
+
+                                @if ($chat->image_path)
+                                    <img src="{{ asset($chat->image_path) }}" class="chat-image">
+                                @endif
+
                                 @if ($chat->is_edited)
                                     <span class="edited-label">(編集済み)</span>
                                 @endif
@@ -127,6 +132,8 @@
                 <!-- メッセージ入力エリア -->
                 <div class="chat-input">
                     <input type="text" class="message-input" placeholder="取引メッセージを入力してください">
+                    <!-- 画像アップロード用（非表示） -->
+                    <input type="file" id="image-upload" class="image-upload-input" accept="image/*" style="display: none;">
                     <button class="add-image">画像を追加</button>
                     <button class="send-message">送信</button>
                 </div>

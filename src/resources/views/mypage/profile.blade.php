@@ -179,7 +179,7 @@
             </div>
 
 
-            <!-- 出品するボタン -->
+            <!-- 更新するボタン -->
             <button type="submit" id="submit-button" class="form-button">更新する</button>
 
         </form>

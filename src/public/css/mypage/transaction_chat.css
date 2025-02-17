@@ -71,7 +71,7 @@ main {
 
 /* サイドバー */
 .chat-sidebar {
-    width: 260px;
+    width: 360px;
     display: flex;
     flex-direction: column; /* 縦方向に配置 */
     align-items: center; /* 水平方向に中央配置 */
@@ -267,6 +267,18 @@ main {
     border-radius: 10px;
     width: 55%;
     margin: 5px auto 5px 10px; /* 左寄せ */
+}
+
+/* アップロード画像の表示 */
+.chat-image {
+    max-width: 100%; /* 親要素（chat-message）の幅を超えない */
+    max-height: 300px; /* 画像の最大高さを指定 */
+    width: auto; /* 横幅は自動調整 */
+    height: auto; /* 縦横比を維持 */
+    display: block; /* インライン要素の余白をなくす */
+    margin: 5px auto; /* 画像を中央に配置 */
+    border-radius: 8px; /* 角を丸める（オプション） */
+    object-fit: contain; /* 縦横比を保持しつつ、最大サイズ内に収める */
 }
 
 /* 自分のメッセージ下部の「時刻」、「編集」、「削除」 */

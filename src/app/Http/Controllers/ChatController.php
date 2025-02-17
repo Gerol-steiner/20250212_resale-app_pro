@@ -84,27 +84,38 @@ class ChatController extends Controller
     // チャットの送信・登録
     public function sendMessage(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string|max:400',
+        Log::info('リクエストデータ:', $request->all());
+
+        $validatedData = $request->validate([
             'purchase_id' => 'required|exists:purchases,id',
+            'message' => 'nullable|string|max:400',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $chat = Chat::create([
-            'purchase_id' => $request->purchase_id,
-            'user_id' => Auth::id(),
-            'message' => $request->message,
-            'is_read' => 0, // 初期値：未読
-            'is_deleted' => 0,
-            'is_edited' => 0,
-        ]);
+        Log::info('バリデーション通過');
+
+        $chat = new Chat();
+        $chat->purchase_id = $validatedData['purchase_id'];
+        $chat->user_id = Auth::id();
+        $chat->message = $validatedData['message'] ?? null;
+
+        // 画像の保存
+        if ($request->hasFile('image')) {
+            Log::info('画像がアップロードされました');
+            $path = $request->file('image')->store('uploads/chats', 'public');
+            $chat->image_path = 'storage/' . $path; // DBには "storage/uploads/chats/filename.png" を保存
+        }
+
+        $chat->save();
 
         return response()->json([
+            'message_id' => $chat->id,
             'message' => $chat->message,
             'time' => $chat->created_at->format('H:i'),
-            'user_id' => $chat->user_id, // 送信者を判定するためのuser_idを渡す
+            'image_path' => $chat->image_path ? asset($chat->image_path) : null, // 画像パスを `asset()` で変換
+            'user_id' => $chat->user_id,
         ]);
     }
-
     /**
      * ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する関数
      *
@@ -134,9 +145,11 @@ class ChatController extends Controller
             // messagesキー
             'messages' => $messages->map(function ($message) {
                 return [
+                    'message_id' => $message->id,
                     'message' => $message->message,
                     'user_id' => $message->user_id,
                     'time' => $message->created_at->format('H:i'),
+                    'image_path' => $message->image_path ? asset($message->image_path) : null,
                 ];
             }),
             // latest_timeキー
