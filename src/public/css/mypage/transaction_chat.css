@@ -84,6 +84,27 @@ main {
     color: #fff;
 }
 
+/* サイドバー：取引中の商品群のリンクを格納するコンテナ */
+.ongoing-transactions {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+/* サイドバー：取引中の各商品のリンク */
+.transaction-link {
+    display: block;
+    padding: 5px;
+    margin: 30px 0;
+    background-color: #eeefeb;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.transaction-link:hover {
+    background-color: #c0c0c0;
+}
+
 /* メイン画面（画面 右側） */
 .chat-main {
     flex-grow: 1; /* 残りのスペースをすべて占める */

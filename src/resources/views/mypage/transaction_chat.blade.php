@@ -36,6 +36,13 @@
     <main>
         <div class="chat-sidebar">
             <h2 class="sidebar-title">その他の取引</h2>
+            <div class="ongoing-transactions">
+                @foreach ($ongoingTransactions as $transaction)
+                    <a href="{{ route('transaction.chat', ['item_id' => $transaction->item_id]) }}" class="transaction-link">
+                        {{ $transaction->item->name }}
+                    </a>
+                @endforeach
+            </div>
         </div>
         <div class="chat-main">
             <!-- 上部: 取引のヘッダー部分 -->

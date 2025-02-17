@@ -65,8 +65,19 @@ class ChatController extends Controller
             $profileName = $user->profile_name; // 自分のユーザー名
         }
 
+        // ユーザーの取引中の商品一覧を取得（サイドバー用）
+        $ongoingTransactions = Purchase::where('in_progress', 1)
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereHas('item', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
+            })
+            ->with('item')
+            ->get();
+
         return view('mypage.transaction_chat', compact(
-            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages', 'profileName'
+            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages', 'profileName', 'ongoingTransactions'
         ));
     }
 
