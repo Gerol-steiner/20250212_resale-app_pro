@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Item extends Model
 {
@@ -47,5 +48,10 @@ class Item extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class, 'item_id');
+    }
+
+    public function chats(): HasManyThrough
+    {
+        return $this->hasManyThrough(Chat::class, Purchase::class, 'item_id', 'purchase_id', 'id', 'id');
     }
 }

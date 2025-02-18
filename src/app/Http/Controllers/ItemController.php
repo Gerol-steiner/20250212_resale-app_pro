@@ -248,6 +248,23 @@ class ItemController extends Controller
                         $itemUnreadCounts[$item->id] = 0;
                     }
                 }
+
+                // ここからソート処理を追加（取得した $items の順番を変える）
+                // 「取引中の商品」タブが選択されたとき、新着メッセージの最新順でソート
+                $items = $items->map(function ($item) use ($userId) {
+                    // 各商品の最新の未読メッセージの時間を取得
+                    $latestUnreadMessageTime = Chat::where('purchase_id', $item->purchases->first()->id ?? null)
+                        ->where('user_id', '!=', $userId)
+                        ->where('is_read', 0)
+                        ->latest()
+                        ->value('created_at');
+
+                    $item->latest_message_time = $latestUnreadMessageTime ?? null;
+                    return $item;
+                });
+
+                // 新着メッセージがある順に並び替え（新しいメッセージ順）
+                $items = $items->sortByDesc('latest_message_time')->values();
             }
         }
 

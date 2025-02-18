@@ -87,7 +87,7 @@
             <div class="item-container">
                 @foreach ($items as $item)
                     <div class="item-card">
-                        <a href="{{ $item->isInProgress ? route('transaction.chat', $item->id) : route('item.detail', $item->id) }}">
+                        <a href="{{ ($currentPage === 'in_progress' && $item->isInProgress) ? route('transaction.chat', $item->id) : route('item.detail', $item->id) }}">
                             <div class="item-image-container">
                                 <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}" class="item-image">
                                 @if ($currentPage === 'in_progress' && isset($itemUnreadCounts[$item->id]) && $itemUnreadCounts[$item->id] > 0)
