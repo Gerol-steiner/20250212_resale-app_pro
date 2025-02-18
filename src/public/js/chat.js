@@ -26,12 +26,12 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.messages.length > 0) {
                     response.messages.forEach((message) => {
-                        // **✅ 自分のメッセージはスキップ（相手のメッセージのみ追加）**
+                        // 自分のメッセージはスキップ（相手のメッセージのみ追加）
                         if (message.user_id == userId) {
                             return; // 自分のメッセージなら処理しない
                         }
 
-                        // **✅ 既にあるメッセージは追加しない**
+                        // 既にあるメッセージは追加しない
                         if (
                             $(
                                 `.chat-message-container[data-message-id="${message.message_id}"]`
@@ -75,7 +75,7 @@ $(document).ready(function () {
                         $(".chat-messages").append(newMessageHtml);
                     });
 
-                    // **✅ 最新のメッセージ時刻を更新**
+                    // 最新のメッセージ時刻を更新
                     lastMessageTime = response.latest_time;
                 }
             },
@@ -226,7 +226,7 @@ $(document).ready(function () {
 
                     errorMessages += "</div>";
 
-                    // **エラーメッセージを `message-input` の上に表示**
+                    // エラーメッセージを `message-input` の上に表示
                     $(".chat-input").prepend(errorMessages);
                 } else {
                     alert("メッセージの送信に失敗しました。");
@@ -373,6 +373,106 @@ $(document).ready(function () {
                     xhr.responseText
                 );
                 alert("編集に失敗しました。");
+            },
+        });
+    });
+
+    $(".complete-transaction").click(function () {
+        let purchaseId = $(".chat-messages").data("purchase-id");
+
+        $.ajax({
+            url: "/transaction/complete",
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                purchase_id: purchaseId,
+            },
+            success: function (response) {
+                console.log("取引が完了しました", response);
+
+                // 取引完了後に評価画面を表示
+                showRatingModal();
+            },
+            error: function (xhr) {
+                alert("取引を完了できませんでした。");
+            },
+        });
+    });
+
+    // 評価画面を表示する関数
+    function showRatingModal() {
+        let modalHtml = `
+            <div class="rating-modal">
+                <div class="modal-content">
+                    <h3>取引が完了しました。</h3>
+                    <div class="rating-text">
+                        <p>今回の取引相手はどうでしたか？</p>
+                        <div class="star-rating">
+                            <img src="/images/star_off.svg" class="star" data-value="1">
+                            <img src="/images/star_off.svg" class="star" data-value="2">
+                            <img src="/images/star_off.svg" class="star" data-value="3">
+                            <img src="/images/star_off.svg" class="star" data-value="4">
+                            <img src="/images/star_off.svg" class="star" data-value="5">
+                        </div>
+                    </div>
+                    <button class="submit-rating" disabled>送信する</button>
+                </div>
+            </div>
+        `;
+
+        $("body").append(modalHtml);
+        $(".rating-modal").fadeIn();
+    }
+
+    // 星をクリックして評価を選択
+    $(document).on("click", ".star", function () {
+        let selectedRating = $(this).data("value");
+
+        // すべての星を OFF にする
+        $(".star").attr("src", "/images/star_off.svg");
+
+        // クリックされた星までを ON にする
+        $(".star").each(function () {
+            if ($(this).data("value") <= selectedRating) {
+                $(this).attr("src", "/images/star_on.svg");
+            }
+        });
+
+        // 選択した評価をデータ属性に保存
+        $(".star-rating").data("selected-rating", selectedRating);
+
+        // 送信ボタンを有効化
+        $(".submit-rating").prop("disabled", false);
+    });
+
+    // 送信ボタンをクリックして評価をサーバーへ送信
+    $(document).on("click", ".submit-rating", function () {
+        let purchaseId = $(".chat-messages").data("purchase-id");
+        let rating = $(".star-rating").data("selected-rating");
+
+        if (!rating) {
+            alert("評価を選択してください。");
+            return;
+        }
+
+        $.ajax({
+            url: "/transaction/rate",
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                purchase_id: purchaseId,
+                rating: rating,
+            },
+            success: function (response) {
+                console.log("評価が送信されました", response);
+
+                // モーダルを閉じる
+                $(".rating-modal").fadeOut(300, function () {
+                    $(this).remove();
+                });
+            },
+            error: function (xhr) {
+                alert("評価の送信に失敗しました。");
             },
         });
     });

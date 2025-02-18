@@ -185,7 +185,13 @@ class ItemController extends Controller
                             $subQuery->select('item_id')
                                 ->from('purchases')
                                 ->where('user_id', $userId)
-                                ->where('in_progress', 1);
+                                ->where(function ($innerQuery) {
+                                    $innerQuery->where('in_progress', 1)
+                                        ->orWhere(function ($q) {
+                                            $q->where('in_progress', 2)
+                                            ->where('buyer_rated', 0); // buyer_rated が 0 の場合のみ
+                                        });
+                                });
                         })
 
                         // 【自分が出品した取引中の商品】
@@ -197,9 +203,15 @@ class ItemController extends Controller
                                 ->whereIn('item_id', function ($innerQuery) use ($userId) {
                                     $innerQuery->select('id')
                                         ->from('items')
-                                        ->where('user_id', $userId); // 自分が出品した商品
+                                        ->where('user_id', $userId);
                                 })
-                                ->where('in_progress', 1);
+                                ->where(function ($innerQuery) {
+                                    $innerQuery->where('in_progress', 1)
+                                        ->orWhere(function ($q) {
+                                            $q->where('in_progress', 2)
+                                            ->where('seller_rated', 0); // seller_rated が 0 の場合のみ
+                                        });
+                                });
                         });
                     });
 
@@ -229,8 +241,19 @@ class ItemController extends Controller
 
         // 各アイテムにフラグを追加
         foreach ($items as $item) {
-            $item->isPurchased = $item->purchases->isNotEmpty(); // 購入済みアイテムかどうかを判断
-            $item->isInProgress = $item->purchases->where('in_progress', 1)->isNotEmpty(); // 取引中アイテムかどうかを判断
+            $purchase = $item->purchases->first();
+
+            if ($purchase) {
+                $isInProgress = $purchase->in_progress == 1 ||
+                    ($purchase->in_progress == 2 &&
+                        (($purchase->user_id == $userId && $purchase->buyer_rated == 0) || // 購入者で未評価
+                        ($item->user_id == $userId && $purchase->seller_rated == 0))); // 出品者で未評価
+            } else {
+                $isInProgress = false;
+            }
+
+            $item->isPurchased = $purchase !== null; // 購入済みアイテムかどうか
+            $item->isInProgress = $isInProgress; // 取引中または評価待ちかどうか
         }
 
         // 未読メッセージのカウント（全体の集計）

@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
         DB::table('likes')->truncate();
         DB::table('comments')->truncate();
 
-
         // 外部キー制約を有効化
         Schema::enableForeignKeyConstraints();
 

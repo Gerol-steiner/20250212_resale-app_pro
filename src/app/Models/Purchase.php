@@ -14,7 +14,9 @@ class Purchase extends Model
         'item_id',
         'payment_method',
         'address_id',
-        'in_progress'
+        'in_progress',
+        'seller_rated',
+        'buyer_rated',
     ];
 
     public function item()
@@ -25,5 +27,10 @@ class Purchase extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 }

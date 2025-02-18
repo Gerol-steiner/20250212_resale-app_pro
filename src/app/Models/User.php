@@ -56,8 +56,8 @@ class User extends Authenticatable implements MustVerifyEmail // （変更後：
         return $this->hasMany(Purchase::class);
     }
 
-        // ユーザーは複数のいいねを持つ
-        public function likes()
+    // ユーザーは複数のいいねを持つ
+    public function likes()
     {
         return $this->hasMany(Like::class);
     }
@@ -65,5 +65,20 @@ class User extends Authenticatable implements MustVerifyEmail // （変更後：
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'rated_id');
+    }
+
+    public function givenRatings()
+    {
+        return $this->hasMany(Rating::class, 'rater_id');
+    }
+
+    public function averageRating()
+    {
+        return $this->receivedRatings()->avg('rating') ?? 0;
     }
 }

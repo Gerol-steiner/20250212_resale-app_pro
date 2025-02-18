@@ -60,7 +60,7 @@
                 </div>
                 <p>開発用 : {{ $userRole }}  userId{{ $userId }}</p>
                 <!-- 取引を完了するボタン（購入者のみ表示） -->
-                @if ($userRole === '購入者')
+                @if ($showCompleteButton)
                     <button class="complete-transaction">取引を完了する</button>
                 @endif
             </div>
@@ -156,7 +156,104 @@
     let profileImage = "{{ asset($profileImage) }}";
     let partnerName = "{{ $partnerName }}";
     let partnerProfileImage = "{{ asset($partnerProfileImage) }}";
+
+    // 取引完了かつ未評価の場合にモーダルを表示するかどうかのフラグ
+    let showRatingModal = @json($showRatingModal);
+
+    // ページロード時に評価モーダルを表示（必要な場合）
+    $(document).ready(function () {
+        if (showRatingModal) {
+            showRatingModalFunction();
+        }
+    });
+
+    // 評価モーダルを表示する関数
+    function showRatingModalFunction() {
+        let modalHtml = `
+            <div class="rating-modal">
+                <div class="modal-content">
+                    <h3>取引が完了しました。</h3>
+                    <div class="rating-text">
+                        <p>今回の取引相手はどうでしたか？</p>
+                        <div class="star-rating">
+                            <img src="/images/star_off.svg" class="star" data-value="1">
+                            <img src="/images/star_off.svg" class="star" data-value="2">
+                            <img src="/images/star_off.svg" class="star" data-value="3">
+                            <img src="/images/star_off.svg" class="star" data-value="4">
+                            <img src="/images/star_off.svg" class="star" data-value="5">
+                        </div>
+                    </div>
+                    <button class="submit-rating" disabled>送信する</button>
+                </div>
+            </div>
+        `;
+
+        $("body").append(modalHtml);
+        $(".rating-modal").fadeIn();
+    }
+
+    // 星をクリックして評価を選択
+    $(document).on("click", ".star", function () {
+        let selectedRating = $(this).data("value");
+
+        // すべての星を OFF にする
+        $(".star").attr("src", "/images/star_off.svg");
+
+        // クリックされた星までを ON にする
+        $(".star").each(function () {
+            if ($(this).data("value") <= selectedRating) {
+                $(this).attr("src", "/images/star_on.svg");
+            }
+        });
+
+        // 選択した評価をデータ属性に保存
+        $(".star-rating").data("selected-rating", selectedRating);
+
+        // 送信ボタンを有効化
+        $(".submit-rating").prop("disabled", false);
+    });
+
+    // 評価送信処理
+    $(document).on("click", ".submit-rating", function () {
+        let purchaseId = $(".chat-messages").data("purchase-id");
+        let rating = $(".star-rating").data("selected-rating");
+
+        if (!rating) {
+            alert("評価を選択してください。");
+            return;
+        }
+
+        // 送信ボタンを無効化（連続送信防止）
+        $(".submit-rating").prop("disabled", true).text("送信中...");
+
+        $.ajax({
+            url: "/transaction/rate",
+            type: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr("content"),
+                purchase_id: purchaseId,
+                rating: rating,
+            },
+            success: function (response) {
+                console.log("評価が送信されました", response);
+
+                // モーダルを閉じる & リダイレクト
+                $(".rating-modal").fadeOut(300, function () {
+                    $(this).remove();
+                    window.location.href = "/"; // 商品一覧ページへ遷移
+                });
+            },
+            error: function (xhr) {
+                console.error("評価の送信に失敗しました", xhr.responseText);
+                alert("エラーが発生しました。もう一度お試しください。");
+
+                // 送信ボタンを再び有効化
+                $(".submit-rating").prop("disabled", false).text("送信する");
+            },
+        });
+    });
 </script>
+
 <script src="{{ asset('js/chat.js') }}"></script>
 </body>
 

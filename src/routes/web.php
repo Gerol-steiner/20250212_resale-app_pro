@@ -10,6 +10,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\PaymentController; // Stripe決済用
 use Illuminate\Foundation\Auth\EmailVerificationRequest; // メール認証用
 use App\Http\Controllers\Auth\VerificationController; // メール認証用
@@ -65,6 +66,11 @@ Route::post('/chat/edit', [ChatController::class, 'editMessage'])->middleware('a
 // ポーリングを用いて、一定の間隔でデータベースからメッセージを取得する
 Route::get('/chat/get-messages', [ChatController::class, 'getMessages'])->name('chat.getMessages');
 
+// 購入者が取引を完了させて評価へと進むメソッド
+Route::post('/transaction/complete', [ChatController::class, 'completeTransaction'])->name('transaction.complete');
+
+// 取引相手の評価メソッド
+Route::post('/transaction/rate', [RatingController::class, 'store'])->middleware('auth');
 
 // 商品詳細ページ
 // コメント登録

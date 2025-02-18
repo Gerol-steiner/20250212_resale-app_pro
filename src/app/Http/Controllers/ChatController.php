@@ -25,13 +25,34 @@ class ChatController extends Controller
         $item = Item::with(['purchases', 'user'])->findOrFail($item_id);
 
         // 対応するpurchaseレコードを取得
-        $purchase = Purchase::where('item_id', $item_id)->where('in_progress', 1)->first();
+        $purchase = Purchase::where('item_id', $item_id)
+            ->where(function ($query) use ($userId) {
+                $query->where('in_progress', 1) // 取引中
+                    ->orWhere(function ($q) use ($userId) {
+                        $q->where('in_progress', 2) // 取引完了後
+                            ->where(function ($innerQuery) use ($userId) {
+                                $innerQuery->where(function ($buyerQuery) use ($userId) {
+                                    $buyerQuery->where('user_id', $userId)
+                                        ->where('buyer_rated', 0); // 購入者が未評価
+                                })
+                                ->orWhere(function ($sellerQuery) use ($userId) {
+                                    $sellerQuery->whereHas('item', function ($q) use ($userId) {
+                                        $q->where('user_id', $userId);
+                                    })
+                                    ->where('seller_rated', 0); // 出品者が未評価
+                                });
+                            });
+                    });
+            })
+            ->first();
 
         $userRole = '未定'; // 初期値
         $partnerName = '不明なユーザー'; // 初期値
         $purchaseId = null; // 初期値
         $partnerProfileImage = null; // 取引相手のプロフィール画像
         $chatMessages = collect(); // チャット履歴（デフォルト空）
+        $showRatingModal = false; // 評価モーダルのフラグ
+        $showCompleteButton = false; // 「取引を完了する」ボタンの表示フラグ
 
 
         if ($purchase) {
@@ -48,6 +69,19 @@ class ChatController extends Controller
             if (isset($partner)) {
                 $partnerName = $partner->profile_name;
                 $partnerProfileImage = $partner->profile_image;
+            }
+
+            // `in_progress=2` かつ未評価のときに評価モーダルを表示
+            if ($purchase->in_progress == 2) {
+                if (($userRole === '購入者' && $purchase->buyer_rated == 0) ||
+                    ($userRole === '出品者' && $purchase->seller_rated == 0)) {
+                    $showRatingModal = true;
+                }
+            }
+
+            // `in_progress=1` の場合のみ「取引を完了する」ボタンを表示
+            if ($purchase->in_progress == 1 && $userRole === '購入者') {
+                $showCompleteButton = true;
             }
 
             // 過去のチャット履歴を取得（作成日時の昇順）
@@ -73,18 +107,35 @@ class ChatController extends Controller
         }
 
         // ユーザーの取引中の商品一覧を取得（サイドバー用）
-        $ongoingTransactions = Purchase::where('in_progress', 1)
-            ->where(function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->orWhereHas('item', function ($q) use ($userId) {
-                        $q->where('user_id', $userId);
-                    });
-            })
-            ->with('item')
-            ->get();
+        $ongoingTransactions = Purchase::where(function ($query) use ($userId) {
+            $query->where('in_progress', 1)
+                ->orWhere(function ($q) use ($userId) {
+                    $q->where('in_progress', 2)
+                        ->where(function ($innerQuery) use ($userId) {
+                            $innerQuery->where(function ($buyerQuery) use ($userId) {
+                                $buyerQuery->where('user_id', $userId)
+                                    ->where('buyer_rated', 0);
+                            })
+                            ->orWhere(function ($sellerQuery) use ($userId) {
+                                $sellerQuery->whereHas('item', function ($q) use ($userId) {
+                                    $q->where('user_id', $userId);
+                                })
+                                ->where('seller_rated', 0);
+                            });
+                        });
+                });
+        })
+        ->where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhereHas('item', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                });
+        })
+        ->with('item')
+        ->get();
 
         return view('mypage.transaction_chat', compact(
-            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages', 'profileName', 'ongoingTransactions'
+            'item', 'isAuthenticated', 'userId', 'userRole', 'partnerName', 'partnerProfileImage', 'profileImage', 'purchaseId', 'chatMessages', 'profileName', 'ongoingTransactions', 'showRatingModal', 'showCompleteButton'
         ));
     }
 
@@ -217,4 +268,28 @@ class ChatController extends Controller
             'is_edited' => $chat->is_edited,
         ]);
     }
+
+    // 購入者が取引を完了させて評価へと進むメソッド
+    public function completeTransaction(Request $request)
+    {
+        $request->validate([
+            'purchase_id' => 'required|exists:purchases,id',
+        ]);
+
+        $purchase = Purchase::where('id', $request->purchase_id)
+            ->where('user_id', Auth::id()) // 購入者のみ実行可能
+            ->where('in_progress', 1) // 取引中のもののみ対象
+            ->first();
+
+        if (!$purchase) {
+            return response()->json(['error' => '取引を完了できませんでした'], 403);
+        }
+
+        // 取引を完了 (in_progress を 2 に変更)
+        $purchase->in_progress = 2;
+        $purchase->save();
+
+        return response()->json(['success' => '取引が完了しました']);
+    }
+
 }

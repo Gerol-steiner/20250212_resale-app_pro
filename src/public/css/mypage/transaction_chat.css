@@ -445,6 +445,70 @@ main {
     margin-left: 5px;
 }
 
+/* 取引相手評価用モーダルのスタイル */
+.rating-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    background: #fdfce6;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: Arial, sans-serif;
+    border: solid 1px rgb(57, 57, 57);
+}
+
+.rating-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-modal h3 {
+    text-align: left;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left: 15px;
+}
+
+.rating-modal .rating-text {
+    border-top: 1px solid rgb(57, 57, 57);
+    border-bottom: 1px solid rgb(57, 57, 57);
+    padding: 20px 0;
+    text-align: left;
+    font-size: 14px;
+}
+
+.rating-text p {
+    margin: 0;
+    margin-left: 15px;
+    color: #868686;
+    font-family: Arial, sans-serif;
+}
+
+.rating-modal .star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.rating-modal .submit-rating {
+    background: #ff7f7f;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 15px auto;
+    display: block;
+    width: fit-content;
+}
+
 /* ■ タブレット（768-850px）向けのスタイル */
 @media screen and (max-width: 850px) {
     /*ヘッダーの設定*/
