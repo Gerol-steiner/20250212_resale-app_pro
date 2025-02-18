@@ -103,7 +103,6 @@ $(document).ready(function () {
     });
 
     // メッセージ送信処理（画像 + テキスト）
-    // メッセージ送信処理（画像 + テキスト）
     $(".send-message-icon").click(function () {
         let message = $(".message-input").val().trim();
         let userId = $(".chat-messages").data("user-id");
@@ -162,6 +161,11 @@ $(document).ready(function () {
                 </div>`
                         : "";
 
+                // テキストが空でも `message-text` を生成
+                let messageTextHtml = response.message
+                    ? `<p class="message-text">${response.message}</p>`
+                    : `<p class="message-text" style="display:none;"></p>`; // 非表示で用意
+
                 let newMessageHtml = `
                 <div class="chat-message-container" data-message-id="${
                     response.message_id
@@ -174,11 +178,7 @@ $(document).ready(function () {
                         }
                     </div>
                     <div class="chat-message ${messageClass}">
-                        ${
-                            response.message
-                                ? `<p class="message-text">${response.message}</p>`
-                                : ""
-                        }
+                        ${messageTextHtml}
                         ${
                             response.image_path
                                 ? `<img src="${response.image_path}" class="chat-image" style="display: none;">`
@@ -347,7 +347,13 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
 
-                // メッセージを更新
+                // `message-text` がない場合は作成**
+                if (messageTextElement.length === 0) {
+                    messageTextElement = $('<p class="message-text"></p>');
+                    chatMessageElement.prepend(messageTextElement);
+                }
+
+                // メッセージを更新して表示
                 messageTextElement.text(response.message).show();
                 messageContainer.find(".edit-message-form").remove();
 
