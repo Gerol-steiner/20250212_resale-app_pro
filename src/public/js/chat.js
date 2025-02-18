@@ -104,7 +104,7 @@ $(document).ready(function () {
 
     // メッセージ送信処理（画像 + テキスト）
     // メッセージ送信処理（画像 + テキスト）
-    $(".send-message").click(function () {
+    $(".send-message-icon").click(function () {
         let message = $(".message-input").val().trim();
         let userId = $(".chat-messages").data("user-id");
         let formData = new FormData();
@@ -112,6 +112,9 @@ $(document).ready(function () {
         formData.append("purchase_id", $(".chat-messages").data("purchase-id"));
         if (message) formData.append("message", message);
         if (selectedImage) formData.append("image", selectedImage);
+
+        // エラーメッセージをクリア
+        $(".error-messages").remove();
 
         $.ajax({
             url: "/chat/send",
@@ -121,6 +124,9 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 console.log("送信成功", response);
+
+                // エラーがあればクリア
+                $(".error-messages").remove();
 
                 if (!response.message_id) {
                     console.error("メッセージ ID が取得できません");
@@ -206,9 +212,25 @@ $(document).ready(function () {
                     };
                 }
             },
-            error: function (error) {
-                console.error("送信エラー", error);
-                alert("メッセージの送信に失敗しました。");
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessages = '<div class="error-messages">';
+
+                    if (errors.message) {
+                        errorMessages += `<p class="error-text">${errors.message[0]}</p>`;
+                    }
+                    if (errors.image) {
+                        errorMessages += `<p class="error-text">${errors.image[0]}</p>`;
+                    }
+
+                    errorMessages += "</div>";
+
+                    // **エラーメッセージを `message-input` の上に表示**
+                    $(".chat-input").prepend(errorMessages);
+                } else {
+                    alert("メッセージの送信に失敗しました。");
+                }
             },
         });
     });

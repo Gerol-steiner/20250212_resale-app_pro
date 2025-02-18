@@ -10,6 +10,7 @@ use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Http\Requests\MessageRequest;
 
 class ChatController extends Controller
 {
@@ -82,22 +83,15 @@ class ChatController extends Controller
     }
 
     // チャットの送信・登録
-    public function sendMessage(Request $request)
+    public function sendMessage(MessageRequest $request)
     {
         Log::info('リクエストデータ:', $request->all());
-
-        $validatedData = $request->validate([
-            'purchase_id' => 'required|exists:purchases,id',
-            'message' => 'nullable|string|max:400',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
         Log::info('バリデーション通過');
 
         $chat = new Chat();
-        $chat->purchase_id = $validatedData['purchase_id'];
+        $chat->purchase_id = $request->purchase_id;
         $chat->user_id = Auth::id();
-        $chat->message = $validatedData['message'] ?? null;
+        $chat->message = $request->message ?? null;
 
         // 画像の保存
         if ($request->hasFile('image')) {

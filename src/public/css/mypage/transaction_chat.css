@@ -205,11 +205,7 @@ main {
     overflow-y: auto; /* スクロール可能に */
     max-height: 550px;
     padding: 10px;
-    background-color: #ebebeb;
-}
-
-.chat-message-container {
-    border: 1px solid red;
+    background-color: #ffffff;
 }
 
 /* ユーザー情報（プロフィール画像とユーザー名）のスタイル */
@@ -219,7 +215,6 @@ main {
     gap: 10px;
     margin-bottom: 5px;
     padding: 0 20px;
-    border: solid 1px cyan;
 }
 
 /* 自分のメッセージ: 右寄せ（名前→画像） */
@@ -290,7 +285,6 @@ main {
     width: 55%;
     font-size: 12px;
     margin: 5px 10px 5px auto; /* 右寄せ */
-    border: solid 1px blue;
 }
 
 /* 相手のメッセージ下部の「時刻」 */
@@ -395,13 +389,34 @@ main {
 /* 下部: メッセージ入力エリア */
 .chat-input {
     display: flex;
-    align-items: center;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-    background-color: #fff;
+    flex-direction: column;
     position: sticky;
     bottom: 0;
+    padding: 10px;
+    background-color: #fff;
+
     width: 100%;
+}
+
+/* 入力欄、画像を追加ボタン、送信ボタン */
+.input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* バリデーションエラーメッセージ */
+.error-messages {
+    display: block;
+    font-weight: 400;
+    color: red;
+    font-size: 10px;
+    margin: 0;
+}
+
+/* バリデーションエラーメッセージ */
+.error-text {
+    margin: 3px 0;
 }
 
 /* メッセージ入力欄 */
@@ -413,8 +428,7 @@ main {
 }
 
 /* 画像追加・送信ボタン */
-.add-image,
-.send-message {
+.add-image {
     margin-left: 10px;
     padding: 8px 12px;
     border: none;
@@ -424,6 +438,11 @@ main {
     border: 2px solid #ff8282;
     cursor: pointer;
     border-radius: 5px;
+}
+
+.send-message-icon {
+    height: 30px;
+    margin-left: 5px;
 }
 
 /* ■ タブレット（768-850px）向けのスタイル */

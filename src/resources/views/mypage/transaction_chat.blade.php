@@ -131,11 +131,15 @@
 
                 <!-- メッセージ入力エリア -->
                 <div class="chat-input">
-                    <input type="text" class="message-input" placeholder="取引メッセージを入力してください">
-                    <!-- 画像アップロード用（非表示） -->
-                    <input type="file" id="image-upload" class="image-upload-input" accept="image/*" style="display: none;">
-                    <button class="add-image">画像を追加</button>
-                    <button class="send-message">送信</button>
+                    <div class="error-messages"></div>
+                    <div class="input-container">
+                        <input type="text" class="message-input" placeholder="取引メッセージを入力してください">
+                        <!-- 画像アップロード用（非表示） -->
+                        <input type="file" id="image-upload" class="image-upload-input" accept="image/*" style="display: none;">
+                        <button class="add-image">画像を追加</button>
+                        <img src="{{ asset('images/inputbuttun.svg') }}" class="send-message-icon" alt="送信">
+
+                    </div>
                 </div>
             </div>
         </div>
