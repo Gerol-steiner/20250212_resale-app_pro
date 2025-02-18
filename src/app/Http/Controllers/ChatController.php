@@ -123,17 +123,25 @@ class ChatController extends Controller
             'last_time' => 'nullable|string', // ISO 8601 または Laravel 形式の文字列
         ]);
 
+        $userId = Auth::id(); // ログインユーザーのID
+
         // last_time を Laravel のタイムゾーンに合わせて変換
         $lastTime = $request->last_time
         ? Carbon::parse($request->last_time)->setTimezone(config('app.timezone'))->toDateTimeString()
         : null;
 
-        $query = Chat::where('purchase_id', $request->purchase_id)
-            ->where('is_deleted', 0) // 削除されていないメッセージのみ
-            ->where('created_at', '>', $lastTime) // last_time より新しいメッセージのみ取得
-            ->orderBy('created_at', 'asc');
+        // メッセージを取得
+        $messages = Chat::where('purchase_id', $request->purchase_id)
+            ->where('is_deleted', 0)
+            ->where('created_at', '>', $lastTime)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-        $messages = $query->get();
+        // 自分が送信したメッセージで、相手がまだ読んでいないものを既読にする
+        Chat::where('purchase_id', $request->purchase_id)
+            ->where('user_id', '!=', $userId) // 相手のメッセージ
+            ->where('is_read', 0) // まだ未読
+            ->update(['is_read' => 1]); // 既読に更新
 
         return response()->json([
             // messagesキー
@@ -142,6 +150,7 @@ class ChatController extends Controller
                     'message_id' => $message->id,
                     'message' => $message->message,
                     'user_id' => $message->user_id,
+                    'is_read' => $message->is_read,
                     'time' => $message->created_at->format('H:i'),
                     'image_path' => $message->image_path ? asset($message->image_path) : null,
                 ];
