@@ -46,7 +46,19 @@
                     <div class="profile-details">
                         <!-- プロフィール画像があれば表示 -->
                         <img src="{{ $profileImage ? asset($profileImage) : asset('images/user_icon_default.png') }}" alt="プロフィール写真" class="profile-image">
-                        <span class="user-name">{{ $userName ?? 'guest user' }}</span> <!-- ユーザー名がnullなら'guest user' -->
+                        <div class="profile-text">
+                            <span class="user-name">{{ $userName ?? 'guest user' }}</span> <!-- ユーザー名がnullなら'guest user' -->
+                                <!-- 平均評価（★表示） -->
+                            <div class="user-rating">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= $averageRating)
+                                        <img src="{{ asset('images/star_on.svg') }}" alt="星" class="star-icon">
+                                    @else
+                                        <img src="{{ asset('images/star_off.svg') }}" alt="空星" class="star-icon">
+                                    @endif
+                                @endfor
+                            </div>
+                        </div>
                     </div>
                     <a href="/mypage/profile" class="edit-profile-button">プロフィールを編集</a> <!-- プロフィール編集ボタン -->
                 </div>

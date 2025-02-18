@@ -40,19 +40,23 @@ $(document).ready(function () {
                             return;
                         }
 
-                        let messageClass = "partner-message";
-                        let controlsClass = "partner-message-controls";
-                        let userInfoClass = "partner-user-info";
+                        // デフォルト値を設定
+                        let senderName = message.profile_name
+                            ? message.profile_name
+                            : "ゲストユーザー";
+                        let senderImage = message.profile_image
+                            ? message.profile_image
+                            : "/images/user_icon_default.png";
 
                         let newMessageHtml = `
                         <div class="chat-message-container" data-message-id="${
                             message.message_id
                         }">
-                            <div class="user-info ${userInfoClass}">
-                                <img src="${partnerProfileImage}" alt="プロフィール写真" class="user-profile-image">
-                                <span class="user-name">${partnerName}</span>
+                            <div class="user-info partner-user-info">
+                                <img src="${senderImage}" alt="プロフィール写真" class="user-profile-image">
+                                <span class="user-name">${senderName}</span>
                             </div>
-                            <div class="chat-message ${messageClass}">
+                            <div class="chat-message partner-message">
                                 ${
                                     message.message
                                         ? `<p class="message-text">${message.message}</p>`
@@ -64,7 +68,7 @@ $(document).ready(function () {
                                         : ""
                                 }
                             </div>
-                            <div class="message-controls ${controlsClass}">
+                            <div class="message-controls partner-message-controls">
                                 <span class="message-time">${
                                     message.time
                                 }</span>
@@ -145,12 +149,12 @@ $(document).ready(function () {
                         ? "my-user-info"
                         : "partner-user-info";
 
-                let userName =
-                    response.user_id == userId ? profileName : partnerName;
-                let userImage =
-                    response.user_id == userId
-                        ? profileImage
-                        : partnerProfileImage;
+                let userName = response.profile_name
+                    ? response.profile_name
+                    : "ゲストユーザー";
+                let userImage = response.profile_image
+                    ? response.profile_image
+                    : "/images/user_icon_default.png";
 
                 let editDeleteButtons =
                     response.user_id == userId

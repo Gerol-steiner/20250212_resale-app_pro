@@ -8,6 +8,7 @@ use App\Models\Purchase; // Purchaseモデルのインポート
 use App\Models\Category; // Categoryモデルをインポート
 use App\Models\Condition; // Conditionモデルをインポート
 use App\Models\Chat;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;  // 認証済みかどうか確認用
 use Illuminate\Support\Facades\Storage;  // 画像を保存のため
 use App\Http\Requests\ExhibitionRequest; // フォームリクエスト
@@ -125,12 +126,24 @@ class ItemController extends Controller
         $isAuthenticated = Auth::check();
         $userId = $isAuthenticated ? Auth::id() : null;
 
+    // ユーザー情報を取得
+        $userName = null;
+        $profileImage = null;
+        $averageRating = null;
+
         // ユーザー情報を取得
         $userName = null;
         if ($isAuthenticated) {
             $user = Auth::user(); // 認証済みユーザーの情報を取得
             $userName = $user->profile_name; // profile_nameを取得
             $profileImage = $user->profile_image; // profile_imageを取得
+
+            // ログインユーザーの平均評価を計算（四捨五入）
+            $averageRating = Rating::where('rated_id', $userId)
+                ->avg('rating'); // 平均値を取得
+
+            // null でなければ四捨五入して整数化
+            $averageRating = $averageRating !== null ? round($averageRating) : 0;
         }
 
         // アイテムのリストを初期化
@@ -289,6 +302,7 @@ class ItemController extends Controller
             'search',
             'unreadMessageCount', // 全体の未読メッセージ数
             'itemUnreadCounts', // 各商品の未読メッセージ数
+            'averageRating', // ログインユーザーの評価（平均値）
         ));
     }
 

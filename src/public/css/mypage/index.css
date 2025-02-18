@@ -130,13 +130,23 @@ body {
     margin: 35px auto; /* 上下のマージン */
 }
 
+.profile-details {
+    display: flex;
+    align-items: center;
+}
+
 .profile-image {
     width: 130px;
-    border-radius: 50%;
-    /* 円形にする */
+    border-radius: 50%; /* 円形にする */
     margin-left: 110px;
-    margin-right: 60px;
-    /* 画像とテキストの間にスペース */
+    margin-right: 20px; /* 画像とテキストの間にスペースを調整 */
+}
+
+/* ユーザー名 & 評価を縦並びにする */
+.profile-text {
+    display: flex;
+    flex-direction: column; /* 縦並びにする */
+    align-items: center;
 }
 
 .user-name {
@@ -144,6 +154,19 @@ body {
     /* フォントサイズ */
     margin-right: 10px;
     /* テキストとボタンの間にスペース */
+}
+
+/* ユーザー評価の★★★☆☆ */
+.user-rating {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.star-icon {
+    width: 40px; /* 星のサイズ */
+    height: 40px;
+    margin-right: 2px;
 }
 
 .edit-profile-button {

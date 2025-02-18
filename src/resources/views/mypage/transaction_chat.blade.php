@@ -89,12 +89,12 @@
                             <div class="user-info {{ $chat->user_id == $userId ? 'my-user-info' : 'partner-user-info' }}">
                                 @if ($chat->user_id == $userId)
                                     <!-- 自分のメッセージ: 名前→画像の順番 -->
-                                    <span class="user-name">{{ $profileName }}</span>
-                                    <img src="{{ asset($profileImage) }}" alt="プロフィール写真" class="user-profile-image">
+                                    <span class="user-name">{{ $profileName ?? 'ゲストユーザー' }}</span>
+                                    <img src="{{ $profileImage ? asset($profileImage) : asset('images/user_icon_default.png') }}" alt="プロフィール写真" class="user-profile-image">
                                 @else
                                     <!-- 相手のメッセージ: 画像→名前の順番 -->
-                                    <img src="{{ asset($partnerProfileImage) }}" alt="プロフィール写真" class="user-profile-image">
-                                    <span class="user-name">{{ $partnerName }}</span>
+                                    <img src="{{ $partnerProfileImage ? asset($partnerProfileImage) : asset('images/user_icon_default.png') }}" alt="プロフィール写真" class="user-profile-image">
+                                    <span class="user-name">{{ $partnerName ?? 'ゲストユーザー' }}</span>
                                 @endif
                             </div>
 
