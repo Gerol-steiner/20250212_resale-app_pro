@@ -7,6 +7,7 @@ use App\Models\Like; // Likeモデルのインポート
 use App\Models\Purchase; // Purchaseモデルのインポート
 use App\Models\Category; // Categoryモデルをインポート
 use App\Models\Condition; // Conditionモデルをインポート
+use App\Models\Chat;
 use Illuminate\Support\Facades\Auth;  // 認証済みかどうか確認用
 use Illuminate\Support\Facades\Storage;  // 画像を保存のため
 use App\Http\Requests\ExhibitionRequest; // フォームリクエスト
@@ -124,7 +125,7 @@ class ItemController extends Controller
         $isAuthenticated = Auth::check();
         $userId = $isAuthenticated ? Auth::id() : null;
 
-        // ユーザー名を取得
+        // ユーザー情報を取得
         $userName = null;
         if ($isAuthenticated) {
             $user = Auth::user(); // 認証済みユーザーの情報を取得
@@ -134,6 +135,7 @@ class ItemController extends Controller
 
         // アイテムのリストを初期化
         $items = collect();
+        $itemUnreadCounts = []; // 各商品ごとの未読メッセージ数を格納する配列
 
         // 「出品した商品」が選択された場合
         if ($tab === 'sell') {
@@ -176,7 +178,7 @@ class ItemController extends Controller
                 $items = Item::with('purchases')
                     ->where(function ($query) use ($userId) {
 
-                        // 【購入した取引中の商品】
+                        // 【自分が購入した取引中の商品】
                         // - purchasesテーブルから、現在のユーザーが購入者である商品を取得
                         // - in_progress = 1（取引中）の商品のみを対象
                         $query->whereIn('id', function ($subQuery) use ($userId) {
@@ -186,7 +188,7 @@ class ItemController extends Controller
                                 ->where('in_progress', 1);
                         })
 
-                        // 【出品した取引中の商品】
+                        // 【自分が出品した取引中の商品】
                         // - 自分が出品した商品（itemsテーブルのuser_id = 現在のユーザーID）
                         // - その商品がpurchasesテーブルに存在し、かつin_progress = 1（取引中）
                         ->orWhereIn('id', function ($subQuery) use ($userId) {
@@ -208,6 +210,19 @@ class ItemController extends Controller
 
                 // クエリを実行し、結果を取得
                 $items = $items->get();
+
+                // 各商品の未読メッセージ数を取得
+                foreach ($items as $item) {
+                    $purchaseId = $item->purchases->where('in_progress', 1)->first()->id ?? null;
+                    if ($purchaseId) {
+                        $itemUnreadCounts[$item->id] = Chat::where('purchase_id', $purchaseId)
+                            ->where('user_id', '!=', $userId)
+                            ->where('is_read', 0)
+                            ->count();
+                    } else {
+                        $itemUnreadCounts[$item->id] = 0;
+                    }
+                }
             }
         }
 
@@ -218,10 +233,40 @@ class ItemController extends Controller
             $item->isInProgress = $item->purchases->where('in_progress', 1)->isNotEmpty(); // 取引中アイテムかどうかを判断
         }
 
+        // 未読メッセージのカウント（全体の集計）
+        $unreadMessageCount = 0;
+        if ($isAuthenticated) {
+            // 取引中の商品に紐づく purchases を取得
+            $inProgressPurchases = Purchase::where('in_progress', 1)
+                ->where(function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->orWhereHas('item', function ($q) use ($userId) {
+                            $q->where('user_id', $userId);
+                        });
+                })
+                ->pluck('id'); // purchase_id のリストを取得
+
+            // 未読メッセージのカウント
+            $unreadMessageCount = Chat::whereIn('purchase_id', $inProgressPurchases)
+                ->where('user_id', '!=', $userId) // 相手のメッセージ
+                ->where('is_read', 0) // 未読のみ
+                ->count();
+    }
+
         // 現在のページを設定
         $currentPage = $tab;
 
-        return view('mypage.index', compact('items', 'currentPage', 'isAuthenticated', 'userId', 'userName', 'profileImage', 'search'));
+        return view('mypage.index', compact(
+            'items',
+            'currentPage',
+            'isAuthenticated',
+            'userId',
+            'userName',
+            'profileImage',
+            'search',
+            'unreadMessageCount', // 全体の未読メッセージ数
+            'itemUnreadCounts', // 各商品の未読メッセージ数
+        ));
     }
 
     // 商品詳細を表示

@@ -55,7 +55,13 @@ class ChatController extends Controller
                 ->where('is_deleted', 0) // 削除されていないメッセージのみ取得
                 ->orderBy('created_at', 'asc') // 古い順に表示
                 ->get();
-        }
+
+            // 取引チャット画面を開いたときに相手の未読メッセージを既読にする
+            Chat::where('purchase_id', $purchaseId)
+                ->where('user_id', '!=', $userId) // 相手のメッセージ
+                ->where('is_read', 0) // まだ未読
+                ->update(['is_read' => 1]); // 既読に更新
+            }
 
         // ログインユーザーのプロフィール情報を取得
         $profileImage = null;

@@ -12,7 +12,7 @@ $(document).ready(function () {
     }
 
     // メッセージ取得ポーリング
-    setInterval(fetchNewMessages, 3000);
+    setInterval(fetchNewMessages, 8000);
 
     // 新しいメッセージを取得する関数
     function fetchNewMessages() {

@@ -60,7 +60,12 @@
                     </li>
                     <!-- TODO：要対応 -->
                     <li class="filter-option">
-                        <a href="/mypage/?tab=in_progress&search={{ $search }}" class="filter-link {{ $currentPage === 'in_progress' ? 'active' : '' }}">取引中の商品</a>
+                        <a href="/mypage/?tab=in_progress&search={{ $search }}" class="filter-link {{ $currentPage === 'in_progress' ? 'active' : '' }}">
+                            取引中の商品
+                                @if ($unreadMessageCount > 0)
+                                    <span class="unread-count">{{ $unreadMessageCount }}</span>
+                                @endif
+                        </a>
                     </li>
                 </ul>
 
@@ -71,7 +76,12 @@
                 @foreach ($items as $item)
                     <div class="item-card">
                         <a href="{{ $item->isInProgress ? route('transaction.chat', $item->id) : route('item.detail', $item->id) }}">
-                            <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}" class="item-image">
+                            <div class="item-image-container">
+                                <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}" class="item-image">
+                                @if ($currentPage === 'in_progress' && isset($itemUnreadCounts[$item->id]) && $itemUnreadCounts[$item->id] > 0)
+                                    <span class="unread-count-badge">{{ $itemUnreadCounts[$item->id] }}</span>
+                                @endif
+                            </div>
                         </a>
                         @if ($item->isPurchased)
                             <img src="{{ asset('images/sold-label.svg') }}" alt="Sold" class="sold-label">

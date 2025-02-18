@@ -118,7 +118,7 @@ body {
 
 /* ■ 画面上部のナビゲーションボタン*/
 .item-filter-nav {
-    border-bottom: 1px solid black;  /*navゾーンのアンダーライン*/
+    border-bottom: 1px solid black; /*navゾーンのアンダーライン*/
 }
 
 /*「プロフィール」ゾーン*/
@@ -127,7 +127,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 35px auto;  /* 上下のマージン */
+    margin: 35px auto; /* 上下のマージン */
 }
 
 .profile-image {
@@ -148,9 +148,9 @@ body {
 
 .edit-profile-button {
     padding: 8px 16px;
-    color: #FF5555;
+    color: #ff5555;
     background-color: #ffffff;
-    border: 2px solid #FF5555;
+    border: 2px solid #ff5555;
     border-radius: 8px;
     text-decoration: none;
 }
@@ -175,13 +175,24 @@ body {
 .filter-link {
     text-decoration: none;
     /* アンダーラインを消す */
-    color: #5F5F5F;
+    color: #5f5f5f;
     /* 選択されていないリンクのカラー */
 }
 
 .filter-link.active {
-    color: #FF0000;
+    color: #ff0000;
     /* 選択中のリンクのカラー */
+}
+
+/* 未読メッセージ件数（全体） */
+.unread-count {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 50%;
+    font-size: 14px;
+    margin-left: 5px;
 }
 
 /* ■ 商品カードの一覧表示*/
@@ -202,6 +213,27 @@ body {
     margin: 35px;
     position: relative;
     /*「Sold」ラベルを左上に表示させるため*/
+}
+
+.item-image-container {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.unread-count-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
 }
 
 .item-image {
@@ -229,8 +261,6 @@ body {
     z-index: 10;
     /* 他の要素の上に表示 */
 }
-
-
 
 /* ■ タブレット（768-850px）向けのスタイル */
 @media screen and (max-width: 850px) {
@@ -274,7 +304,6 @@ body {
         z-index: 10;
         /* 他の要素の上に表示 */
     }
-
 
     /*ヘッダーの設定*/
     .header {
@@ -333,7 +362,6 @@ body {
     }
 
     .search-button {
-
         height: 70%;
         font-size: 16px;
     }
@@ -355,13 +383,12 @@ body {
         /* 上下のマージン */
     }
 
-
     .profile-image {
         width: 110px;
         border-radius: 50%;
         /* 円形にする */
         margin-left: 30px;
-        margin-right:30px;
+        margin-right: 30px;
         /* 画像とテキストの間にスペース */
     }
 
