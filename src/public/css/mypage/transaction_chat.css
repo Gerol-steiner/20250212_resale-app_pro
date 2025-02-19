@@ -88,6 +88,7 @@ main {
 .ongoing-transactions {
     margin-top: 10px;
     padding: 10px;
+    width: 270px;
 }
 
 /* サイドバー：取引中の各商品のリンク */
@@ -549,5 +550,95 @@ main {
     .header__link {
         margin-right: 30px;
         /* リンクの間隔 */
+    }
+
+    /* サイドバー */
+    .chat-sidebar {
+        width: 200px;
+        display: flex;
+        flex-direction: column; /* 縦方向に配置 */
+        align-items: center; /* 水平方向に中央配置 */
+        text-align: center; /* テキストを中央揃え */
+        background-color: #868686;
+    }
+
+    /* サイドバータイトル */
+    .sidebar-title {
+        color: #fff;
+        font-size: 20px;
+    }
+
+    /* サイドバー：取引中の商品群のリンクを格納するコンテナ */
+    .ongoing-transactions {
+        margin-top: 10px;
+        padding: 10px;
+        width: 170px;
+        font-size: 12px;
+    }
+
+    /* 画面右側： 中部_商品画像 */
+    .item-image {
+        width: 120px;
+        height: 120px;
+        margin-left: 10px;
+    }
+
+    /* 画面右側： 中部_商品名 */
+    .product-name {
+        font-size: 25px;
+        margin: 10px 0;
+    }
+
+    /* 画面右側： 中部_商品価格 */
+    .product-price {
+        font-size: 25px;
+        margin: 10px 0;
+    }
+
+    /* 画面右側： 中部_円記号と税込表記 */
+    .yen-symbol {
+        font-size: 20px;
+    }
+
+    /* 画面右側： 上部ヘッダー */
+    .chat-header {
+        padding: 10px;
+    }
+
+    /* 取引相手のプロフィール画像 */
+    .partner-profile-image {
+        width: 50px;
+        border-radius: 50%;
+        border: #c9c9c9 1px solid;
+    }
+
+    /* タイトル「〇〇さんとの取引」 */
+    .chat-header h2 {
+        margin: 0;
+        font-size: 15px;
+    }
+
+    /* 「取引を完了する」ボタン */
+    .complete-transaction {
+        margin-left: 10px;
+        padding: 8px 12px;
+        border: none;
+        background-color: #ff8282;
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 100px;
+    }
+
+    /* 自分のメッセージ、相手のメッセージ */
+    .my-message,
+    .partner-message {
+        width: 75%;
+    }
+
+    /* 自分、相手のメッセージ下部の「時刻」、「編集」、「削除」 */
+    .my-message-controls,
+    .partner-message-controls {
+        width: 75%;
     }
 }

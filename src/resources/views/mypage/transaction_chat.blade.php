@@ -58,7 +58,6 @@
                         class="partner-profile-image">
                     <h2>「{{ $partnerName }}」 さんとの取引画面</h2>
                 </div>
-                <p>開発用 : {{ $userRole }}  userId{{ $userId }}</p>
                 <!-- 取引を完了するボタン（購入者のみ表示） -->
                 @if ($showCompleteButton)
                     <button class="complete-transaction">取引を完了する</button>
