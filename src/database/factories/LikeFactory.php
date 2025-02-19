@@ -18,7 +18,7 @@ class LikeFactory extends Factory
     public function definition()
     {
         // 最大試行回数
-        $maxAttempts = 10;
+        $maxAttempts = 3;
 
         for ($attempts = 0; $attempts < $maxAttempts; $attempts++) {
             // ランダムなユーザーを選択

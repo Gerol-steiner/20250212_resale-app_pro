@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
         DB::table('purchases')->truncate();
         DB::table('likes')->truncate();
         DB::table('comments')->truncate();
+        DB::table('chats')->truncate();
+        DB::table('ratings')->truncate();
 
         // 外部キー制約を有効化
         Schema::enableForeignKeyConstraints();
@@ -38,7 +40,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ConditionsTableSeeder::class);
         $this->call(ItemsTableSeeder::class);
         $this->call(AddressesTableSeeder::class);
-        $this->call(PurchasesTableSeeder::class);
         $this->call(LikesTableSeeder::class);
         $this->call(CommentsTableSeeder::class);
     }

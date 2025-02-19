@@ -17,6 +17,7 @@ class UserFactory extends Factory
             'profile_name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'), // すべてのユーザーに同じパスワードを設定
+            'email_verified_at' => now(),
         ];
     }
 
