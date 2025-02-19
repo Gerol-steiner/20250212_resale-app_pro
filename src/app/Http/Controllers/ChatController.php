@@ -10,7 +10,8 @@ use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\Http\Requests\MessageRequest;
+use App\Http\Requests\MessageRequest; // フォームリクエスト
+use App\Notifications\TransactionCompleted; // 取引完了時のメール通知用
 
 class ChatController extends Controller
 {
@@ -159,12 +160,17 @@ class ChatController extends Controller
 
         $chat->save();
 
+        // ここで user の情報を取得してレスポンスに含める（各メッセージ上部のプロフィール情報表示用）
+        $user = $chat->user; // Eloquent のリレーションを利用
+
         return response()->json([
             'message_id' => $chat->id,
             'message' => $chat->message,
             'time' => $chat->created_at->format('H:i'),
             'image_path' => $chat->image_path ? asset($chat->image_path) : null, // 画像パスを `asset()` で変換
             'user_id' => $chat->user_id,
+            'profile_name' => $user->profile_name ?? 'ゲストユーザー',
+            'profile_image' => $user->profile_image ? asset($user->profile_image) : asset('images/user_icon_default.png'),
         ]);
     }
     /**
@@ -175,6 +181,7 @@ class ChatController extends Controller
      */
     public function getMessages(Request $request)
     {
+
         $request->validate([
             'purchase_id' => 'required|exists:purchases,id',
             'last_time' => 'nullable|string', // ISO 8601 または Laravel 形式の文字列
@@ -182,41 +189,50 @@ class ChatController extends Controller
 
         $userId = Auth::id(); // ログインユーザーのID
 
-        // last_time を Laravel のタイムゾーンに合わせて変換
-        $lastTime = $request->last_time
-        ? Carbon::parse($request->last_time)->setTimezone(config('app.timezone'))->toDateTimeString()
-        : null;
+        try {
+            $lastTime = $request->last_time
+                ? Carbon::parse($request->last_time)->setTimezone(config('app.timezone'))->toDateTimeString()
+                : null;
 
-        // メッセージを取得
-        $messages = Chat::where('purchase_id', $request->purchase_id)
-            ->where('is_deleted', 0)
-            ->where('created_at', '>', $lastTime)
-            ->orderBy('created_at', 'asc')
-            ->get();
+            $messages = Chat::where('purchase_id', $request->purchase_id)
+                ->where('is_deleted', 0)
+                ->where('created_at', '>', $lastTime)
+                ->orderBy('created_at', 'asc')
+                ->with('user') // 🔹 ユーザー情報を取得
+                ->get();
 
-        // 自分が送信したメッセージで、相手がまだ読んでいないものを既読にする
-        Chat::where('purchase_id', $request->purchase_id)
-            ->where('user_id', '!=', $userId) // 相手のメッセージ
-            ->where('is_read', 0) // まだ未読
-            ->update(['is_read' => 1]); // 既読に更新
+            // 既読処理
+            Chat::where('purchase_id', $request->purchase_id)
+                ->where('user_id', '!=', $userId)
+                ->where('is_read', 0)
+                ->update(['is_read' => 1]);
 
-        return response()->json([
-            // messagesキー
-            'messages' => $messages->map(function ($message) {
-                return [
-                    'message_id' => $message->id,
-                    'message' => $message->message,
-                    'user_id' => $message->user_id,
-                    'is_read' => $message->is_read,
-                    'time' => $message->created_at->format('H:i'),
-                    'image_path' => $message->image_path ? asset($message->image_path) : null,
-                ];
-            }),
-            // latest_timeキー
-            'latest_time' => $messages->isNotEmpty()
-                ? $messages->last()->created_at->toISOString()
-                : $request->last_time,
-        ]);
+            return response()->json([
+                'messages' => $messages->map(function ($message) {
+                    return [
+                        'message_id' => $message->id,
+                        'message' => $message->message,
+                        'user_id' => $message->user_id,
+                        'is_read' => $message->is_read,
+                        'time' => $message->created_at->format('H:i'),
+                        'image_path' => $message->image_path ? asset($message->image_path) : null,
+                        'profile_name' => $message->user->profile_name ?? 'ゲストユーザー', // 修正
+                        'profile_image' => $message->user->profile_image
+                            ? asset($message->user->profile_image)
+                            : asset('images/user_icon_default.png'),
+                    ];
+                }),
+                'latest_time' => $messages->isNotEmpty()
+                    ? $messages->last()->created_at->toISOString()
+                    : $request->last_time,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getMessages()', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
     // チャットの削除
@@ -288,6 +304,14 @@ class ChatController extends Controller
         // 取引を完了 (in_progress を 2 に変更)
         $purchase->in_progress = 2;
         $purchase->save();
+
+        // 取引相手（出品者）の情報を取得
+        $seller = User::find($purchase->item->user_id);
+
+        // 出品者にメール通知を送信
+        if ($seller) {
+            $seller->notify(new TransactionCompleted($purchase));
+        }
 
         return response()->json(['success' => '取引が完了しました']);
     }

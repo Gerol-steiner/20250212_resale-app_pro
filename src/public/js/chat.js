@@ -11,6 +11,29 @@ $(document).ready(function () {
         return;
     }
 
+    // 遷移前の入力内容を localStorage から復元
+    let savedMessage = localStorage.getItem(`chatMessage_${purchaseId}`);
+    if (savedMessage) {
+        $(".message-input").val(savedMessage);
+        console.log(`savedMessage: ${savedMessage}`);
+    }
+
+    // メッセージ入力時に localStorage に保存
+    $(".message-input").on("input", function () {
+        let messageText = $(this).val();
+        localStorage.setItem(`chatMessage_${purchaseId}`, messageText);
+        console.log(`messageText: ${messageText}`);
+    });
+
+    // サイドバーのリンクをクリックする前にメッセージを保存
+    $(".transaction-link").on("click", function () {
+        localStorage.setItem(
+            `chatMessage_${purchaseId}`,
+            $(".message-input").val()
+        );
+        console.log("asda");
+    });
+
     // メッセージ取得ポーリング
     setInterval(fetchNewMessages, 8000);
 
@@ -40,7 +63,7 @@ $(document).ready(function () {
                             return;
                         }
 
-                        // デフォルト値を設定
+                        // 受信した profile_name, profile_image を使用
                         let senderName = message.profile_name
                             ? message.profile_name
                             : "ゲストユーザー";
@@ -127,6 +150,9 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 console.log("送信成功", response);
+
+                // 送信成功後に localStorage から削除
+                localStorage.removeItem(`chatMessage_${purchaseId}`);
 
                 // エラーがあればクリア
                 $(".error-messages").remove();
