@@ -15,7 +15,7 @@ class AddInProgressToPurchasesTable extends Migration
     {
         Schema::table('purchases', function (Blueprint $table) {
             // 取引中かどうかを示すカラムの追加
-            $table->boolean('in_progress')->nullable()->default(null); // 0, 1, null
+            $table->boolean('in_progress')->nullable()->default(null)->comment('1: 取引中, 2: 取引完了, null: 未設定');
         });
     }
 

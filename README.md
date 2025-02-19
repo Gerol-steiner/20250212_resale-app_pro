@@ -21,13 +21,13 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
 2. 以下のコマンドを実行してリポジトリをクローンします。
 
    ```bash
-   git clone git@github.com:Gerol-steiner/20241112_resale-app.git
+   git clone git@github.com:Gerol-steiner/20250212_resale-app_pro.git
 
    ```
 
 3. クローンしたディレクトリに移動します（必要であればディレクトリ名を変更）
    ```bash
-   cd 20241112_resale-app
+   20250212_resale-app_pro.git
    ```
 
 ### 2. Docker でコンテナを起動
@@ -143,7 +143,8 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
 
 #### 【目的】
 
-シードデータに対応する商品画像やプロフィール画像を適切な場所に配置します。
+シードデータに対応する商品画像を適切な場所に配置します。  
+（下記方法は一例であり、各自適切な方法で画像をコピーまたは移動してください）
 
 #### 【手順】
 
@@ -156,7 +157,7 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
 
 2. コンテナ外で以下のコマンドを実行します。
    ```bash
-   mv src/public/images/uploads src/storage/app/public/
+   cp -r src/public/images/uploads src/storage/app/public/
    ```
 
 ### 7. ストレージリンクの作成
@@ -183,7 +184,8 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
 
 #### 【目的】
 
-アプリケーションが`storage`ディレクトリにアクセスできるようにします。
+アプリケーションが`storage`ディレクトリにアクセスできるようにします。  
+（以下はあくまでも一例です。権限のエラーが発生したら状況に合わせ適切に対処してください。）
 
 #### 【手順】
 
@@ -241,6 +243,32 @@ GitHub のリポジトリからプロジェクトをローカル環境にコピ�
 1. 商品画像やプロフィール画像: 商品やプロフィール画像が正しい場所に配置されていない場合、アプリケーションが正常に動作しません。必ずダミーデータの画像を storage/app/public/uploads に移動してください。
 2. 権限の付与: 特に storage ディレクトリへの書き込み権限が不足している場合、エラーが発生します。権限設定を確実に行ってください。
 3. 環境依存: 上記の手順は Linux を想定しています。Windows や Mac の場合、コマンドが異なる場合がありますので適宜環境に合わせて調整してください。
+
+---
+
+### 【ダミーデータの内容】
+
+- ダミーデータとしてユーザーが **3 人**、商品が **10 個** 作成されます。
+- ユーザーは **全てメール認証済みユーザー** として作成されます。
+- ユーザーのログインパスワードは **"password"** に統一されています。
+- 作成されるダミー商品は以下の通りです。
+
+| 商品 ID | 商品名           | 価格   | 商品説明                               | コンディション       |
+| ------- | ---------------- | ------ | -------------------------------------- | -------------------- |
+| CO01    | 腕時計           | 15,000 | スタイリッシュなデザインのメンズ腕時計 | 良好                 |
+| CO02    | HDD              | 5,000  | 高速で信頼性の高いハードディスク       | 目立った傷や汚れなし |
+| CO03    | 玉ねぎ 3 束      | 300    | 新鮮な玉ねぎ 3 束のセット              | やや傷や汚れあり     |
+| CO04    | 革靴             | 4,000  | クラシックなデザインの革靴             | 状態が悪い           |
+| CO05    | ノート PC        | 45,000 | 高性能なノートパソコン                 | 良好                 |
+| CO06    | マイク           | 8,000  | 高音質のレコーディング用マイク         | 目立った傷や汚れなし |
+| CO07    | ショルダーバッグ | 3,500  | おしゃれなショルダーバッグ             | やや傷や汚れあり     |
+| CO08    | タンブラー       | 500    | 使いやすいタンブラー                   | 状態が悪い           |
+| CO09    | コーヒーミル     | 4,000  | 手動のコーヒーミル                     | 良好                 |
+| CO10    | メイクセット     | 2,500  | 便利なメイクアップセット               | 目立った傷や汚れなし |
+
+- CO01 ～ CO05 は id=1 のユーザーの出品商品です。
+- CO06 ～ CO10 は id=2 のユーザーの出品商品です。
+- id=3 のユーザーは出品商品なしです。
 
 ---
 
@@ -455,20 +483,50 @@ php artisan db:seed --env=testing
 - ユーザー登録: [http://localhost/register](http://localhost/register)
 - ログイン: [http://localhost/login](http://localhost/login)
 - マイページ: [http://localhost/mypage](http://localhost/mypage)
+- プロフィール編集: [http://localhost/mypage/profile](http://localhost/mypage/profile)
 - 商品一覧: [http://localhost/](http://localhost/)
 - 商品詳細: [http://localhost/item/{item_id}](http://localhost/item/{item_id})
 - 商品購入: [http://localhost/purchase/{id}](http://localhost/purchase/{id})
-- プロフィール編集：[http://localhost/mypage/profile](http://localhost/mypage/profile)
-
-### 開発者向けエンドポイント
-
+- 出品ページ: [http://localhost/sell](http://localhost/sell)
 - いいね機能: [POST] [http://localhost/like/{item_id}](http://localhost/like/{item_id})
 - コメント機能: [POST] [http://localhost/item/{item_id}/comments](http://localhost/item/{item_id}/comments)
 
+### チャット機能
+
+- 取引チャット画面の表示: [http://localhost/transaction-chat/{item_id}](http://localhost/transaction-chat/{item_id})
+- メッセージの送信: [POST] [http://localhost/chat/send](http://localhost/chat/send)
+- メッセージの削除: [POST] [http://localhost/chat/delete](http://localhost/chat/delete)
+- メッセージの編集: [POST] [http://localhost/chat/edit](http://localhost/chat/edit)
+- メッセージの取得（ポーリング用）: [GET] [http://localhost/chat/get-messages](http://localhost/chat/get-messages)
+- 取引完了の処理: [POST] [http://localhost/transaction/complete](http://localhost/transaction/complete)
+
+### 評価機能
+
+- 取引相手の評価登録: [POST] [http://localhost/transaction/rate](http://localhost/transaction/rate)
+
+### 購入・配送関連
+
+- 商品購入ページ（初回）: [http://localhost/purchase/{id}](http://localhost/purchase/{id})
+- 商品購入ページ（住所変更後の遷移）: [http://localhost/purchase/{id}](http://localhost/purchase/{id})
+- 配送先住所の変更: [http://localhost/purchase/address/{item_id}](http://localhost/purchase/address/{item_id})
+- 配送先住所の更新: [POST] [http://localhost/address/update](http://localhost/address/update)
+
+### 決済機能（Stripe）
+
+- チェックアウトセッション作成: [POST] [http://localhost/create-checkout-session](http://localhost/create-checkout-session)
+- 決済成功後のリダイレクト: [http://localhost/purchase/success](http://localhost/purchase/success)
+- コンビニ支払い後の Thanks ページ: [http://localhost/showthanks](http://localhost/showthanks)
+- 購入完了ページ: [http://localhost/purchase-complete](http://localhost/purchase-complete)
+
+### メール認証関連
+
+- メール認証待ちページ: [http://localhost/register/pending](http://localhost/register/pending)
+- メール認証リクエスト: [GET] [http://localhost/email/verify/{id}/{hash}](http://localhost/email/verify/{id}/{hash})
+
 ### 認証関連
 
-- メール認証待ち: [http://localhost/register/pending](http://localhost/register/pending)
-- メール認証: [GET] [http://localhost/email/verify/{id}/{hash}](http://localhost/email/verify/{id}/{hash})
+- ログイン: [POST] [http://localhost/login](http://localhost/login)
+- ログアウト: [POST] [http://localhost/logout](http://localhost/logout)
 
 正確なアプリケーションのルート構成は routes/web.php に定義されています。  
 必要に応じて、該当ファイルをご確認いただき、最新のルートや追加エンドポイントをご参照ください。
